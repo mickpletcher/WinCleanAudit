@@ -216,3 +216,15 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Local planning docs
+future-upgrades.md
+
+# Prompt workspace content
+prompts/
+
+# Generated WinCleanAudit reports and logs
+reports/*.md
+reports/*.log
+!reports/.gitkeep
+testResults.xml

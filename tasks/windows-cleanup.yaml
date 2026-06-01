@@ -1,0 +1,84 @@
+application:
+  name: WinCleanAudit
+  version: 1.0.0
+
+execution:
+  default_mode: DryRun
+
+reporting:
+  output_folder: reports
+
+logging:
+  level: INFO
+
+safety:
+  protect_user_data: true
+  protected_locations:
+    - Desktop
+    - Documents
+    - Pictures
+    - Videos
+    - Music
+    - OneDrive
+    - Dropbox
+    - Google Drive
+  blocked_extensions:
+    - .ps1
+    - .psm1
+    - .psd1
+    - .cs
+    - .js
+    - .ts
+
+modules:
+  enabled:
+    - TempCleanup
+    - WindowsUpdateCache
+    - RecycleBin
+    - OldLogCleanup
+    - BrowserCache
+    - StartupInventory
+    - LargeFileReport
+    - DuplicateDownloads
+    - InstalledApps
+    - DiskHealth
+  entry_points:
+    TempCleanup: Invoke-TempCleanup
+    WindowsUpdateCache: Invoke-WindowsUpdateCacheTask
+    RecycleBin: Invoke-RecycleBinCleanup
+    OldLogCleanup: Invoke-OldLogCleanup
+    BrowserCache: Invoke-BrowserCacheCleanup
+    StartupInventory: Invoke-StartupInventory
+    LargeFileReport: Invoke-LargeFileReport
+    DuplicateDownloads: Invoke-DuplicateDownloadsReport
+    InstalledApps: Invoke-InstalledAppsInventory
+    DiskHealth: Invoke-DiskHealthReport
+
+windows_update_cache:
+  enabled: true
+  mode: audit_and_optional_cleanup
+  path: "C:\\Windows\\SoftwareDistribution\\Download"
+  requires_admin: true
+  destructive: true
+  default_behavior: DryRun
+  requires_confirmation: true
+  services:
+    - wuauserv
+    - bits
+    - cryptsvc
+  safety:
+    preserve_parent_folder: true
+    delete_child_items_only: true
+    restart_services_after_cleanup: true
+
+old_log_cleanup:
+  age_days: 30
+  paths:
+    - "C:\\Windows\\Logs"
+    - "C:\\Windows\\Temp"
+    - "C:\\ProgramData\\Microsoft\\Windows\\WER"
+
+large_file_report:
+  min_size_mb: 500
+  paths:
+    - Downloads
