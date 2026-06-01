@@ -47,6 +47,7 @@ Validation performed on June 1, 2026:
 * Pipeline dispatch was refactored to use configured module entry points.
 * PowerShell test workflow was cleaned up.
 * README badge URLs were updated to the real GitHub repository path.
+* GitHub Actions workflow pins were updated to Node 24-compatible action versions.
 
 ## Git Status Notes
 

@@ -61,6 +61,7 @@ This changelog tracks changes to the prompt repository itself. It does not repla
 * Refactored pipeline module dispatch to resolve entry points from `tasks/windows-cleanup.yaml`.
 * Added tests for configuration-driven pipeline dispatch.
 * Added the upgrade tracking rule to `future-upgrades.md` and documented that implemented upgrade items must be reflected in `completed-upgrades.md`, `changelog.md`, and `assessment.md`.
+* Updated GitHub Actions workflow action pins to Node 24-compatible versions.
 
 ### Removed
 
