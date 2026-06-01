@@ -2,9 +2,11 @@
 
 ## Quick Overview
 
-This repository now contains the generated `WinCleanAudit` PowerShell project plus the prompt set used to create it.
+This repository now contains the generated `WinCleanAudit`
+PowerShell project plus the prompt set used to create it.
 
-`WinCleanAudit` is a safety-first Windows cleanup and audit toolkit. The core app, modules, tests, docs, workflows, and prompt files are present.
+`WinCleanAudit` is a safety-first Windows cleanup and audit toolkit.
+The core app, modules, tests, docs, workflows, and prompt files are present.
 
 ## Current Repo Contents
 
@@ -31,7 +33,12 @@ This repository now contains the generated `WinCleanAudit` PowerShell project pl
 
 `future-upgrades.md` exists locally and is intentionally ignored by git.
 
-When an item from `future-upgrades.md` is implemented, update `future-upgrades.md`, `completed-upgrades.md`, `changelog.md`, and `assessment.md` in the same pass.
+When an item from `future-upgrades.md` is implemented, update:
+
+* `future-upgrades.md`
+* `completed-upgrades.md`
+* `changelog.md`
+* `assessment.md`
 
 ## Current Status
 
@@ -42,16 +49,20 @@ Validation performed on June 1, 2026:
 * PowerShell syntax check passed for all `.ps1` and `.psm1` files.
 * `.\src\WinCleanAudit.ps1 -DryRun` completed successfully.
 * Pester test suite passed: 38 passed, 0 failed.
+* Markdownlint passed: 12 files checked, 0 errors.
 * DryRun generated Markdown reports and log files under `reports/`.
 * `README.md` was rewritten for novice users with safer first-run guidance.
 * Pipeline dispatch was refactored to use configured module entry points.
 * PowerShell test workflow was cleaned up.
 * README badge URLs were updated to the real GitHub repository path.
-* GitHub Actions workflow pins were updated to Node 24-compatible action versions.
+* GitHub Actions workflow pins were updated to Node 24-compatible
+  action versions.
+* Markdown prose was wrapped and `.markdownlint.json` was added for MD013.
 
 ## Git Status Notes
 
-Most project files are currently untracked because the repo originally tracked only:
+Most project files are currently untracked because the repo originally tracked
+only:
 
 ```text
 .gitignore
@@ -67,7 +78,10 @@ The `.gitignore` was updated so:
 * `reports/.gitkeep` can be tracked.
 * `testResults.xml` from Pester CI runs is ignored.
 
-Before committing, review `git status` and intentionally stage the generated project files, docs, workflows, and repo tracking files. Do not stage `prompts/`.
+Before committing, review `git status` and intentionally stage the generated
+project files, docs, workflows, and repo tracking files.
+
+Do not stage `prompts/`.
 
 ## Safety Model
 
@@ -119,7 +133,8 @@ Write-MarkdownReport
 
 ### 1. Pipeline dispatch is now configuration-driven
 
-`src/modules/Pipeline.psm1` now resolves module entry points from `tasks/windows-cleanup.yaml`.
+`src/modules/Pipeline.psm1` now resolves module entry points from
+`tasks/windows-cleanup.yaml`.
 
 This removes the previous hard-coded module map from the pipeline.
 
@@ -127,7 +142,8 @@ Priority: handled.
 
 ### 2. GitHub Actions PowerShell workflow was cleaned up
 
-The unnecessary `actions/setup-python@v5` step was removed from `.github/workflows/powershell-tests.yml`.
+The unnecessary `actions/setup-python@v5` step was removed from
+`.github/workflows/powershell-tests.yml`.
 
 Windows runners already include PowerShell.
 
@@ -145,9 +161,12 @@ Priority: handled.
 
 ### 4. Tests pass but are still mostly contract-level
 
-The Pester suite validates imports, DryRun behavior, basic output shape, and guards.
+The Pester suite validates imports, DryRun behavior, basic output shape,
+and guards.
 
-It does not deeply test edge cases for every destructive path, locked files, registry view behavior, browser profile exclusions, service restart failure, or large directory performance.
+It does not deeply test edge cases for every destructive path, locked files,
+registry view behavior, browser profile exclusions, service restart failure,
+or large directory performance.
 
 Priority: medium before relying on `-Execute`.
 
@@ -155,7 +174,8 @@ Priority: medium before relying on `-Execute`.
 
 DryRun creates report and log files under `reports/`.
 
-The ignore rules now exclude generated Markdown reports and logs while allowing `reports/.gitkeep`.
+The ignore rules now exclude generated Markdown reports and logs while allowing
+`reports/.gitkeep`.
 
 Priority: handled.
 
@@ -181,8 +201,10 @@ Before trusting `-Execute` broadly:
 
 1. Add deeper mocked tests for destructive paths.
 2. Add tests for service restart failure in Windows Update cache cleanup.
-3. Add tests proving browser cache cleanup cannot touch cookies, passwords, bookmarks, profiles, or extensions.
-4. Add tests proving protected folders and source-code folders are excluded by cleanup modules.
+3. Add tests proving browser cache cleanup cannot touch cookies, passwords,
+   bookmarks, profiles, or extensions.
+4. Add tests proving protected folders and source-code folders are excluded
+   by cleanup modules.
 
 ## Next Step
 
@@ -192,4 +214,7 @@ Run:
 git status --short --ignored
 ```
 
-Then stage the intended files. Do not stage `prompts/`, generated reports, `testResults.xml`, or `future-upgrades.md`.
+Then stage the intended files.
+
+Do not stage `prompts/`, generated reports, `testResults.xml`, or
+`future-upgrades.md`.

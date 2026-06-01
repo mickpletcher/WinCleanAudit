@@ -13,7 +13,8 @@ Include:
 
 ## Coordinated Disclosure
 
-Do not publicly share destructive bypass details until maintainers review and fix the issue.
+Do not publicly share destructive bypass details until maintainers review and
+fix the issue.
 
 ## Safety Issue Examples
 

@@ -7,7 +7,8 @@ This file lists items from future-upgrades.md that are already implemented.
 - [x] Keep DryRun as the default execution mode.
 - [x] Enforce NoPrompt only when Execute is also provided.
 - [x] Use a shared structured result contract across modules.
-- [x] Resolve pipeline module entry points from configuration instead of a hard-coded dispatch map.
+- [x] Resolve pipeline module entry points from configuration instead of a
+  hard-coded dispatch map.
 
 ## Tier 2: Quality and Dev Experience
 

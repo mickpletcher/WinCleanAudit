@@ -5,7 +5,8 @@
 - Default mode is DryRun.
 - No cleanup runs unless Execute is explicitly passed.
 - NoPrompt is blocked unless Execute is also passed.
-- Destructive actions require confirmation unless Execute and NoPrompt are both used.
+- Destructive actions require confirmation unless Execute and NoPrompt are
+  both used.
 
 ## Protected Locations
 
@@ -32,7 +33,8 @@ Never clean content from:
 
 - Tests must mock destructive actions.
 - Tests must not empty recycle bin.
-- Tests must not delete temp files, browser cache, old logs, or update cache content.
+- Tests must not delete temp files, browser cache, old logs, or update cache
+  content.
 - Tests must not modify startup configuration, apps, disks, or services.
 
 ## Common Report Fields

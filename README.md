@@ -1,13 +1,16 @@
 # WinCleanAudit
 
-![PowerShell Tests](https://github.com/mickpletcher/windows-system-cleanup-tool/actions/workflows/powershell-tests.yml/badge.svg)
-![Markdown Lint](https://github.com/mickpletcher/windows-system-cleanup-tool/actions/workflows/markdown-lint.yml/badge.svg)
+[![PowerShell Tests][powershell-tests-badge]][powershell-tests-workflow]
+[![Markdown Lint][markdown-lint-badge]][markdown-lint-workflow]
 
 Version: v1.0.0
 
 WinCleanAudit is a Windows cleanup and audit tool built with PowerShell.
 
-It is designed to be safe first. By default, it only scans your computer and writes a report. It does not delete anything unless you explicitly run it in execute mode.
+It is designed to be safe first.
+
+By default, it only scans your computer and writes a report.
+It does not delete anything unless you explicitly run it in execute mode.
 
 ## Who This Is For
 
@@ -33,7 +36,8 @@ Start with this command:
 
 It scans and reports. It does not clean or delete files.
 
-Do not use `-Execute` until you have reviewed the report and understand what will happen.
+Do not use `-Execute` until you have reviewed the report and understand what
+will happen.
 
 ## Quick Start
 
@@ -45,8 +49,8 @@ Do not use `-Execute` until you have reviewed the report and understand what wil
 .\src\WinCleanAudit.ps1 -DryRun
 ```
 
-4. Open the newest report in the `reports` folder.
-5. Review warnings, errors, and recommendations.
+1. Open the newest report in the `reports` folder.
+2. Review warnings, errors, and recommendations.
 
 Reports are saved here:
 
@@ -92,7 +96,8 @@ Automation mode.
 .\src\WinCleanAudit.ps1 -Execute -NoPrompt
 ```
 
-This skips confirmation prompts. Use it only in trusted automation after testing.
+This skips confirmation prompts.
+Use it only in trusted automation after testing.
 
 The tool blocks this unsafe command:
 
@@ -109,7 +114,7 @@ The tool blocks this unsafe command:
 These modules can clean only when you use `-Execute`.
 
 | Module | What It Does |
-|---|---|
+| --- | --- |
 | TempCleanup | Reviews approved Windows temp folders. |
 | WindowsUpdateCache | Reviews Windows Update download cache. Cleanup may require admin rights. |
 | RecycleBin | Reviews Recycle Bin contents. |
@@ -121,7 +126,7 @@ These modules can clean only when you use `-Execute`.
 These modules report only. They do not delete or disable anything.
 
 | Module | What It Does |
-|---|---|
+| --- | --- |
 | StartupInventory | Lists startup folder items, registry startup items, and logon scheduled tasks. |
 | LargeFileReport | Finds large files for manual review. |
 | DuplicateDownloads | Finds likely duplicate files in Downloads. |
@@ -145,7 +150,8 @@ It should not delete from:
 * Git repositories
 * Source-code folders
 
-If one module fails, the rest of the tool should continue running. The error should appear in the report.
+If one module fails, the rest of the tool should continue running.
+The error should appear in the report.
 
 ## Reading The Report
 
@@ -231,7 +237,8 @@ Main configuration file:
 tasks/windows-cleanup.yaml
 ```
 
-This file controls enabled modules, report settings, safety settings, and module-specific options.
+This file controls enabled modules, report settings, safety settings, and
+module-specific options.
 
 ## Upgrade Tracking
 
@@ -252,8 +259,9 @@ Repo changes are tracked here:
 * Some inventory data depends on Windows version and user permissions.
 * Browser cache cleanup may skip locked files if browsers are open.
 * Windows Update cache cleanup requires administrator rights.
-* Tests currently focus on contracts and safety guards. More destructive-path mock coverage is recommended before broad `-Execute` use.
-* Pipeline module dispatch currently uses a module-to-function map.
+* Tests currently focus on contracts and safety guards.
+  More destructive-path mock coverage is recommended before broad
+  `-Execute` use.
 
 ## First-Time Recommendation
 
@@ -264,3 +272,8 @@ Run only this:
 ```
 
 Read the report before using `-Execute`.
+
+[powershell-tests-badge]: https://github.com/mickpletcher/windows-system-cleanup-tool/actions/workflows/powershell-tests.yml/badge.svg
+[powershell-tests-workflow]: https://github.com/mickpletcher/windows-system-cleanup-tool/actions/workflows/powershell-tests.yml
+[markdown-lint-badge]: https://github.com/mickpletcher/windows-system-cleanup-tool/actions/workflows/markdown-lint.yml/badge.svg
+[markdown-lint-workflow]: https://github.com/mickpletcher/windows-system-cleanup-tool/actions/workflows/markdown-lint.yml

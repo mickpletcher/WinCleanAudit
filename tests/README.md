@@ -26,6 +26,7 @@ Invoke-Pester -Path .\tests\Pester\TempCleanup.Tests.ps1
 Safety model for tests:
 
 - Destructive actions are mocked.
-- Tests must not delete temp files, browser cache, recycle bin content, old logs, or update cache.
+- Tests must not delete temp files, browser cache, recycle bin content,
+  old logs, or update cache.
 - Tests must not modify startup entries, installed applications, or disks.
 - Temporary fixtures should use isolated test paths only.
