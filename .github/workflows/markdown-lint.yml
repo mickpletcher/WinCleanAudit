@@ -18,3 +18,5 @@ jobs:
         with:
           globs: |
             **/*.md
+            !prompts/**
+            !reports/**

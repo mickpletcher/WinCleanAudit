@@ -81,6 +81,7 @@ project will eventually contain.
   `completed-upgrades.md`, `changelog.md`, and `assessment.md`.
 * Updated GitHub Actions workflow action pins to Node 24-compatible versions.
 * Added `.markdownlint.json` and wrapped Markdown prose to satisfy MD013.
+* Updated Markdown lint workflow to exclude `prompts/**` and `reports/**`.
 
 ### Removed
 

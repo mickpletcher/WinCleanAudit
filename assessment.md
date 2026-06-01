@@ -58,6 +58,7 @@ Validation performed on June 1, 2026:
 * GitHub Actions workflow pins were updated to Node 24-compatible
   action versions.
 * Markdown prose was wrapped and `.markdownlint.json` was added for MD013.
+* Markdown lint workflow excludes local prompt and report content.
 
 ## Git Status Notes
 
