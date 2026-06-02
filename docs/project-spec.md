@@ -1,0 +1,83 @@
+# WinCleanAudit Project Spec
+
+## Purpose
+
+WinCleanAudit is a safe Windows cleanup and audit tool written in PowerShell.
+
+It helps users find wasted disk space, risky startup entries, old logs, large
+files, duplicate downloads, installed apps, browser cache usage, Recycle Bin
+usage, Windows Update cache usage, and basic disk health signals.
+
+## Non Goals
+
+WinCleanAudit does not silently delete files.
+
+WinCleanAudit does not clean user data folders, source code folders, or cloud
+sync folders.
+
+WinCleanAudit does not clean browser passwords, cookies, history, bookmarks, or
+profile data.
+
+WinCleanAudit does not replace enterprise endpoint management, backup, EDR, or
+configuration management tools.
+
+## Safety Rules
+
+DryRun is the default mode.
+
+Cleanup requires explicit `-Execute`.
+
+`-NoPrompt` is allowed only with `-Execute`.
+
+Protected paths are always excluded.
+
+Module failures must be reported and must not stop the full run.
+
+Execute mode must still respect protected path rules.
+
+## Report Contract
+
+Markdown reports are always written.
+
+DryRun also writes an HTML report and opens it in the default browser.
+
+Reports are written under `reports/` by default.
+
+Generated reports and logs must not be committed.
+
+## Module Contract
+
+Each module returns a structured result object:
+
+```powershell
+[PSCustomObject]@{
+    TaskName        = ""
+    Module          = ""
+    Status          = "Success|Warning|Error|Skipped"
+    Mode            = "DryRun|Execute"
+    ItemsScanned    = 0
+    ItemsModified   = 0
+    EstimatedBytes  = 0
+    RecoveredBytes  = 0
+    ActionsTaken    = @()
+    Warnings        = @()
+    Errors          = @()
+    Recommendations = @()
+    Details         = @()
+    Duration        = 0
+}
+```
+
+## Release Criteria
+
+PowerShell syntax check passes for all `.ps1` and `.psm1` files.
+
+Pester passes.
+
+DryRun completes.
+
+Markdown and HTML reports are generated.
+
+Generated reports and logs are not staged.
+
+Documentation matches current behavior.

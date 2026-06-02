@@ -30,6 +30,10 @@ project will eventually contain.
   prompts `01` through `17` in GitHub Copilot.
 * Added `completed-upgrades.md` to track implemented items from the upgrade
   roadmap.
+* Added `docs/project-spec.md` for purpose, non-goals, safety rules, report
+  contract, module contract, and release criteria.
+* Added GitHub issue templates for bug reports and feature requests.
+* Added a GitHub pull request template with validation and safety checks.
 
 ### Changed
 

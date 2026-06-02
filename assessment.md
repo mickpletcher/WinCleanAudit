@@ -12,8 +12,15 @@ The core app, modules, tests, docs, workflows, and prompt files are present.
 
 ```text
 .
-├── .github/workflows/
+├── .github/
+│   ├── ISSUE_TEMPLATE/
+│   ├── PULL_REQUEST_TEMPLATE.md
+│   └── workflows/
 ├── docs/
+│   ├── project-spec.md
+│   ├── roadmap.md
+│   ├── safety-rules.md
+│   └── usage-examples.md
 ├── prompts/
 ├── reports/
 ├── src/
@@ -59,6 +66,8 @@ Validation performed on June 1, 2026:
   action versions.
 * Markdown prose was wrapped and `.markdownlint.json` was added for MD013.
 * Markdown lint workflow excludes local prompt and report content.
+* Lightweight GitHub project governance was added through
+  `docs/project-spec.md`, issue templates, and a pull request template.
 
 ## Git Status Notes
 

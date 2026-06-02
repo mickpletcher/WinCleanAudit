@@ -215,8 +215,15 @@ The badges point to the GitHub Actions workflows for this repository.
 
 ```text
 .
-├── .github/workflows/
+├── .github/
+│   ├── ISSUE_TEMPLATE/
+│   ├── PULL_REQUEST_TEMPLATE.md
+│   └── workflows/
 ├── docs/
+│   ├── project-spec.md
+│   ├── roadmap.md
+│   ├── safety-rules.md
+│   └── usage-examples.md
 ├── reports/
 ├── src/
 │   ├── WinCleanAudit.ps1
@@ -241,6 +248,12 @@ tasks/windows-cleanup.yaml
 
 This file controls enabled modules, report settings, safety settings, and
 module-specific options.
+
+## Project Spec
+
+The lightweight project spec is here:
+
+[docs/project-spec.md](docs/project-spec.md)
 
 ## Upgrade Tracking
 
