@@ -19,6 +19,20 @@ function ConvertTo-ReadableSize {
     return ('{0:N2} {1}' -f $size, $units[$idx])
 }
 
+function ConvertTo-HtmlText {
+    [CmdletBinding()]
+    param(
+        [AllowNull()]
+        [object]$Value
+    )
+
+    if ($null -eq $Value) {
+        return ''
+    }
+
+    return [System.Net.WebUtility]::HtmlEncode([string]$Value)
+}
+
 function New-WinCleanReport {
     [CmdletBinding()]
     param(
@@ -67,14 +81,15 @@ function Write-MarkdownReport {
     param(
         [Parameter(Mandatory)]
         $Report,
-        [string]$OutputFolder = 'reports'
+        [string]$OutputFolder = 'reports',
+        [string]$Timestamp = (Get-Date -Format 'yyyyMMdd-HHmmss')
     )
 
     if (-not (Test-Path $OutputFolder)) {
         New-Item -Path $OutputFolder -ItemType Directory -Force | Out-Null
     }
 
-    $fileName = 'cleanup-report-{0}.md' -f (Get-Date -Format 'yyyyMMdd-HHmmss')
+    $fileName = 'cleanup-report-{0}.md' -f $Timestamp
     $path = Join-Path $OutputFolder $fileName
 
     $lines = @()
@@ -136,4 +151,109 @@ function Write-MarkdownReport {
     return $path
 }
 
-Export-ModuleMember -Function New-WinCleanReport, ConvertTo-ReadableSize, Add-ReportSection, Write-MarkdownReport
+function Write-HtmlReport {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        $Report,
+        [string]$OutputFolder = 'reports',
+        [string]$Timestamp = (Get-Date -Format 'yyyyMMdd-HHmmss')
+    )
+
+    if (-not (Test-Path $OutputFolder)) {
+        New-Item -Path $OutputFolder -ItemType Directory -Force | Out-Null
+    }
+
+    $fileName = 'cleanup-report-{0}.html' -f $Timestamp
+    $path = Join-Path $OutputFolder $fileName
+
+    $summaryRows = foreach ($result in $Report.Results) {
+        '<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td><td>{5}</td></tr>' -f
+            (ConvertTo-HtmlText $result.Module),
+            (ConvertTo-HtmlText $result.Status),
+            (ConvertTo-HtmlText $result.ItemsScanned),
+            (ConvertTo-HtmlText $result.ItemsModified),
+            (ConvertTo-HtmlText (ConvertTo-ReadableSize -Bytes $result.EstimatedBytes)),
+            (ConvertTo-HtmlText (ConvertTo-ReadableSize -Bytes $result.RecoveredBytes))
+    }
+
+    $moduleSections = foreach ($result in $Report.Results) {
+        $listBlocks = @()
+        foreach ($name in @('ActionsTaken','Warnings','Errors','Recommendations')) {
+            if ($result.$name.Count -gt 0) {
+                $items = foreach ($item in $result.$name) {
+                    '<li>{0}</li>' -f (ConvertTo-HtmlText $item)
+                }
+                $heading = $name -replace '([a-z])([A-Z])', '$1 $2'
+                $listBlocks += '<h3>{0}</h3><ul>{1}</ul>' -f $heading, ($items -join '')
+            }
+        }
+
+        @"
+<section>
+  <h2>$(ConvertTo-HtmlText $result.TaskName)</h2>
+  <table>
+    <tbody>
+      <tr><th>Status</th><td>$(ConvertTo-HtmlText $result.Status)</td></tr>
+      <tr><th>Mode</th><td>$(ConvertTo-HtmlText $result.Mode)</td></tr>
+      <tr><th>Items Found</th><td>$(ConvertTo-HtmlText $result.ItemsScanned)</td></tr>
+      <tr><th>Items Modified</th><td>$(ConvertTo-HtmlText $result.ItemsModified)</td></tr>
+      <tr><th>Estimated Size</th><td>$(ConvertTo-HtmlText (ConvertTo-ReadableSize -Bytes $result.EstimatedBytes))</td></tr>
+      <tr><th>Recovered Size</th><td>$(ConvertTo-HtmlText (ConvertTo-ReadableSize -Bytes $result.RecoveredBytes))</td></tr>
+    </tbody>
+  </table>
+  $($listBlocks -join "`n  ")
+</section>
+"@
+    }
+
+    $html = @"
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WinCleanAudit Report</title>
+  <style>
+    body { font-family: "Segoe UI", Arial, sans-serif; margin: 2rem; color: #1f2937; background: #f8fafc; }
+    main { max-width: 1100px; margin: 0 auto; }
+    h1, h2, h3 { color: #111827; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; background: #fff; }
+    th, td { border: 1px solid #d1d5db; padding: .6rem .75rem; text-align: left; vertical-align: top; }
+    th { background: #e5e7eb; }
+    section { margin-top: 2rem; }
+    ul { background: #fff; border: 1px solid #d1d5db; padding: 1rem 1rem 1rem 2rem; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>WinCleanAudit Report</h1>
+  <table>
+    <tbody>
+      <tr><th>Computer</th><td>$(ConvertTo-HtmlText $Report.ComputerName)</td></tr>
+      <tr><th>User</th><td>$(ConvertTo-HtmlText $Report.UserName)</td></tr>
+      <tr><th>Date</th><td>$(ConvertTo-HtmlText $Report.DateTime)</td></tr>
+      <tr><th>PowerShell</th><td>$(ConvertTo-HtmlText $Report.PowerShellVersion)</td></tr>
+      <tr><th>Mode</th><td>$(ConvertTo-HtmlText $Report.Mode)</td></tr>
+    </tbody>
+  </table>
+  <h2>Summary</h2>
+  <table>
+    <thead>
+      <tr><th>Module</th><th>Status</th><th>Items Scanned</th><th>Items Modified</th><th>Estimated</th><th>Recovered</th></tr>
+    </thead>
+    <tbody>
+      $($summaryRows -join "`n      ")
+    </tbody>
+  </table>
+  $($moduleSections -join "`n  ")
+</main>
+</body>
+</html>
+"@
+
+    $html | Set-Content -Path $path -Encoding utf8
+    return $path
+}
+
+Export-ModuleMember -Function New-WinCleanReport, ConvertTo-ReadableSize, Add-ReportSection, Write-MarkdownReport, Write-HtmlReport

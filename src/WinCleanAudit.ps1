@@ -57,13 +57,23 @@ if (-not $ReportPath) {
     $ReportPath = Join-Path $PSScriptRoot "..\$($config.reporting.output_folder)"
 }
 
-$writtenReport = Write-MarkdownReport -Report $report -OutputFolder $ReportPath
+$reportStamp = Get-Date -Format 'yyyyMMdd-HHmmss'
+$writtenReport = Write-MarkdownReport -Report $report -OutputFolder $ReportPath -Timestamp $reportStamp
 Write-WCALog -Message "Report written: $writtenReport" -Level 'SUCCESS'
+
+$writtenHtmlReport = $null
+if ($DryRun) {
+    $writtenHtmlReport = Write-HtmlReport -Report $report -OutputFolder $ReportPath -Timestamp $reportStamp
+    Write-WCALog -Message "HTML report written: $writtenHtmlReport" -Level 'SUCCESS'
+    Start-Process -FilePath $writtenHtmlReport
+}
+
 Close-WCALog
 
 [PSCustomObject]@{
-    Version = $script:WinCleanAuditVersion
-    Mode    = $mode
-    Report  = $writtenReport
-    Results = $results
+    Version    = $script:WinCleanAuditVersion
+    Mode       = $mode
+    Report     = $writtenReport
+    HtmlReport = $writtenHtmlReport
+    Results    = $results
 }

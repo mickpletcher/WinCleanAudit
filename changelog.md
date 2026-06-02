@@ -82,6 +82,8 @@ project will eventually contain.
 * Updated GitHub Actions workflow action pins to Node 24-compatible versions.
 * Added `.markdownlint.json` and wrapped Markdown prose to satisfy MD013.
 * Updated Markdown lint workflow to exclude `prompts/**` and `reports/**`.
+* DryRun now writes an HTML report and opens it in the default browser.
+* Updated `.gitignore` to ignore generated HTML reports under `reports/`.
 
 ### Removed
 
@@ -93,7 +95,7 @@ project will eventually contain.
 
 * PowerShell syntax check passed for all `.ps1` and `.psm1` files.
 * `.\src\WinCleanAudit.ps1 -DryRun` completed successfully.
-* Pester passed: 38 tests passed, 0 failed.
+* Pester passed: 39 tests passed, 0 failed.
 
 ### Notes
 

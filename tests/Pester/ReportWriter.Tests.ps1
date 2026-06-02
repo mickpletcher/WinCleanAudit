@@ -8,6 +8,7 @@ Describe 'ReportWriter' {
         Get-Command ConvertTo-ReadableSize -ErrorAction Stop | Should -Not -BeNullOrEmpty
         Get-Command Add-ReportSection -ErrorAction Stop | Should -Not -BeNullOrEmpty
         Get-Command Write-MarkdownReport -ErrorAction Stop | Should -Not -BeNullOrEmpty
+        Get-Command Write-HtmlReport -ErrorAction Stop | Should -Not -BeNullOrEmpty
     }
 
     It 'converts bytes to readable values' {
@@ -21,8 +22,20 @@ Describe 'ReportWriter' {
         }
         $report = New-WinCleanReport -Mode DryRun -Results @($result)
         $tmp = Join-Path $env:TEMP 'wca-tests-report'
-        $path = Write-MarkdownReport -Report $report -OutputFolder $tmp
-        Split-Path -Leaf $path | Should -Match '^cleanup-report-\d{8}-\d{6}\.md$'
+        $path = Write-MarkdownReport -Report $report -OutputFolder $tmp -Timestamp '20260601-201500'
+        Split-Path -Leaf $path | Should -Be 'cleanup-report-20260601-201500.md'
         Test-Path $path | Should -BeTrue
+    }
+
+    It 'writes html report with required name pattern' {
+        $result = [PSCustomObject]@{
+            TaskName='Test'; Module='Test'; Status='Success'; Mode='DryRun'; ItemsScanned=0; ItemsModified=0; EstimatedBytes=0; RecoveredBytes=0; ActionsTaken=@('Scanned only'); Warnings=@(); Errors=@(); Recommendations=@(); Details=@(); Duration=0
+        }
+        $report = New-WinCleanReport -Mode DryRun -Results @($result)
+        $tmp = Join-Path $env:TEMP 'wca-tests-report'
+        $path = Write-HtmlReport -Report $report -OutputFolder $tmp -Timestamp '20260601-201500'
+        Split-Path -Leaf $path | Should -Be 'cleanup-report-20260601-201500.html'
+        Test-Path $path | Should -BeTrue
+        Get-Content -Raw -Path $path | Should -Match '<!doctype html>'
     }
 }

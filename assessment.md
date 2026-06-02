@@ -48,9 +48,9 @@ Validation performed on June 1, 2026:
 
 * PowerShell syntax check passed for all `.ps1` and `.psm1` files.
 * `.\src\WinCleanAudit.ps1 -DryRun` completed successfully.
-* Pester test suite passed: 38 passed, 0 failed.
+* Pester test suite passed: 39 passed, 0 failed.
 * Markdownlint passed: 12 files checked, 0 errors.
-* DryRun generated Markdown reports and log files under `reports/`.
+* DryRun generated Markdown, HTML, and log files under `reports/`.
 * `README.md` was rewritten for novice users with safer first-run guidance.
 * Pipeline dispatch was refactored to use configured module entry points.
 * PowerShell test workflow was cleaned up.
@@ -75,7 +75,8 @@ The `.gitignore` was updated so:
 
 * `future-upgrades.md` remains local-only.
 * `prompts/` is ignored and should remain local-only.
-* generated `reports/*.md` and `reports/*.log` are ignored.
+* generated `reports/*.md`, `reports/*.html`, and `reports/*.log` are
+  ignored.
 * `reports/.gitkeep` can be tracked.
 * `testResults.xml` from Pester CI runs is ignored.
 
@@ -95,6 +96,7 @@ The app enforces these project rules:
 * Module failures should not stop the full run.
 * Modules return structured PowerShell objects.
 * Reports are generated in Markdown.
+* DryRun also generates an HTML report and opens it in the default browser.
 
 ## Standard Result Contract
 
@@ -128,6 +130,7 @@ New-WinCleanReport
 ConvertTo-ReadableSize
 Add-ReportSection
 Write-MarkdownReport
+Write-HtmlReport
 ```
 
 ## Findings

@@ -20,7 +20,7 @@ Use this tool if you want to:
 * Review old logs, temp files, browser cache, and Recycle Bin usage.
 * Inventory startup items and installed apps.
 * Check disk usage and basic disk health.
-* Generate a Markdown report you can review later.
+* Generate Markdown and HTML reports you can review later.
 
 You do not need to be a PowerShell expert to run a basic scan.
 
@@ -49,7 +49,7 @@ will happen.
 .\src\WinCleanAudit.ps1 -DryRun
 ```
 
-1. Open the newest report in the `reports` folder.
+1. Review the HTML report that opens in your browser.
 2. Review warnings, errors, and recommendations.
 
 Reports are saved here:
@@ -62,6 +62,7 @@ Report files use this format:
 
 ```text
 cleanup-report-YYYYMMDD-HHMMSS.md
+cleanup-report-YYYYMMDD-HHMMSS.html
 ```
 
 ## Run Modes
@@ -74,7 +75,8 @@ Safe audit mode.
 .\src\WinCleanAudit.ps1 -DryRun
 ```
 
-Use this first. It scans and writes a report. It does not delete anything.
+Use this first. It scans, writes reports, and opens the HTML report in your
+browser. It does not delete anything.
 
 ### Execute
 
@@ -271,7 +273,7 @@ Run only this:
 .\src\WinCleanAudit.ps1 -DryRun
 ```
 
-Read the report before using `-Execute`.
+Read the HTML report that opens in your browser before using `-Execute`.
 
 [powershell-tests-badge]: https://github.com/mickpletcher/windows-system-cleanup-tool/actions/workflows/powershell-tests.yml/badge.svg
 [powershell-tests-workflow]: https://github.com/mickpletcher/windows-system-cleanup-tool/actions/workflows/powershell-tests.yml

@@ -6,6 +6,9 @@
 .\src\WinCleanAudit.ps1 -DryRun
 ```
 
+DryRun writes Markdown and HTML reports.
+The HTML report opens in your default browser.
+
 ## Execute With Confirmation
 
 ```powershell
