@@ -69,6 +69,7 @@ function Clear-OldLogs {
     foreach ($entry in $candidate.Details) {
         if (Test-WCAProtectedPath -Path $entry.Path) {
             $result.Warnings += "Protected path skipped: $($entry.Path)"
+            Add-WCAExecutionLog -Result $result -Action 'Skip' -Status 'Skipped' -Target $entry.Path -Operation 'Remove old log file' -Reason 'Protected path' | Out-Null
             continue
         }
         try {
@@ -76,12 +77,15 @@ function Clear-OldLogs {
             $result.ItemsScanned++
             $result.EstimatedBytes += $item.Length
             if ($PSCmdlet.ShouldProcess($entry.Path, 'Remove old log file')) {
+                Add-WCAExecutionLog -Result $result -Action 'Delete' -Status 'Attempted' -Target $entry.Path -Operation 'Remove old log file' | Out-Null
                 Remove-Item -LiteralPath $entry.Path -Force -ErrorAction Stop
+                Add-WCAExecutionLog -Result $result -Action 'Delete' -Status 'Succeeded' -Target $entry.Path -Operation 'Remove old log file' | Out-Null
                 $result.ItemsModified++
                 $result.RecoveredBytes += $item.Length
             }
         }
         catch {
+            Add-WCAExecutionLog -Result $result -Action 'Delete' -Status 'Failed' -Target $entry.Path -Operation 'Remove old log file' -Reason $_.Exception.Message | Out-Null
             $result.Warnings += ConvertTo-WCAFailureMessage -Message $_.Exception.Message -Path $entry.Path -Operation 'Remove old log file'
         }
     }

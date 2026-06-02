@@ -46,6 +46,9 @@ project will eventually contain.
 * Added `-NoBrowserLaunch` for DryRun automation scenarios.
 * Added path normalization tests for protected locations and cloud sync
   exclusions.
+* Added structured execution logs for delete attempts, skipped cleanup items,
+  and service actions.
+* Added Windows Update service restart validation after cache cleanup.
 
 ### Changed
 
@@ -117,7 +120,9 @@ project will eventually contain.
 
 * PowerShell syntax check passed for all `.ps1` and `.psm1` files.
 * `.\src\WinCleanAudit.ps1 -DryRun` completed successfully.
-* Pester passed: 46 tests passed, 0 failed.
+* `.\src\WinCleanAudit.ps1 -DryRun -NoBrowserLaunch -JsonReport -CsvReport`
+  completed successfully.
+* Pester passed: 59 tests passed, 0 failed.
 
 ### Notes
 

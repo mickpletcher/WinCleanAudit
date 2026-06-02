@@ -71,6 +71,7 @@ function Invoke-WCAModule {
             Errors          = @($errorMessage)
             Recommendations = @('Review module implementation and retry.')
             Details         = @()
+            ExecutionLog    = @()
             Duration        = $duration
         }
     }

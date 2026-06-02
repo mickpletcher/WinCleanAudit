@@ -18,7 +18,19 @@ Describe 'Results' {
         $r.PSObject.Properties.Name | Should -Contain 'Errors'
         $r.PSObject.Properties.Name | Should -Contain 'Recommendations'
         $r.PSObject.Properties.Name | Should -Contain 'Details'
+        $r.PSObject.Properties.Name | Should -Contain 'ExecutionLog'
         $r.PSObject.Properties.Name | Should -Contain 'Duration'
+    }
+
+    It 'adds structured execution log entries' {
+        $r = New-WCAResult -TaskName 'Test' -Module 'Unit' -Mode 'Execute'
+
+        Add-WCAExecutionLog -Result $r -Action 'Delete' -Status 'Attempted' -Target 'C:\Temp\a.tmp' -Operation 'Remove temp file' | Out-Null
+
+        $r.ExecutionLog.Count | Should -Be 1
+        $r.ExecutionLog[0].Action | Should -Be 'Delete'
+        $r.ExecutionLog[0].Status | Should -Be 'Attempted'
+        $r.ExecutionLog[0].Target | Should -Be 'C:\Temp\a.tmp'
     }
 
     It 'classifies access denied failures' {

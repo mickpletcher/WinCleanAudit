@@ -27,6 +27,9 @@ The HTML report opens in your default browser.
 .\src\WinCleanAudit.ps1 -Execute -NoPrompt
 ```
 
+Execute mode records attempted deletes, skipped cleanup items, and service
+actions in `ExecutionLog`.
+
 ## Report Path Override
 
 ```powershell
@@ -54,10 +57,13 @@ execution:
 .\src\Install-WinCleanAuditScheduledTask.ps1 -Frequency Weekly -JsonReport -CsvReport
 ```
 
+The scheduled task runs DryRun with `-NoBrowserLaunch`.
+
 ## Module Notes
 
 - Temp cleanup audits approved temp folders in DryRun.
-- Windows Update cache cleanup only removes child items in the download folder.
+- Windows Update cache cleanup only removes child items in the download folder
+  and validates service restart state after cleanup.
 - Recycle bin cleanup only runs in Execute mode.
 - Old log cleanup targets safe system locations and age threshold.
 - Browser cache cleanup targets cache files only and skips profile data.

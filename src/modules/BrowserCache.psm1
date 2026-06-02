@@ -93,17 +93,21 @@ function Clear-BrowserCache {
             $result.EstimatedBytes += $_.Length
             if ($blockedNames -contains $_.Name) {
                 $result.Warnings += "Protected browser file skipped: $($_.FullName)"
+                Add-WCAExecutionLog -Result $result -Action 'Skip' -Status 'Skipped' -Target $_.FullName -Operation 'Remove browser cache file' -Reason 'Protected browser profile file' | Out-Null
                 return
             }
 
             try {
                 if ($PSCmdlet.ShouldProcess($_.FullName, 'Remove browser cache file')) {
+                    Add-WCAExecutionLog -Result $result -Action 'Delete' -Status 'Attempted' -Target $_.FullName -Operation 'Remove browser cache file' | Out-Null
                     Remove-Item -LiteralPath $_.FullName -Force -ErrorAction Stop
+                    Add-WCAExecutionLog -Result $result -Action 'Delete' -Status 'Succeeded' -Target $_.FullName -Operation 'Remove browser cache file' | Out-Null
                     $result.ItemsModified++
                     $result.RecoveredBytes += $_.Length
                 }
             }
             catch {
+                Add-WCAExecutionLog -Result $result -Action 'Delete' -Status 'Failed' -Target $_.FullName -Operation 'Remove browser cache file' -Reason $_.Exception.Message | Out-Null
                 $result.Warnings += ConvertTo-WCAFailureMessage -Message $_.Exception.Message -Path $_.FullName -Operation 'Remove browser cache file'
             }
         }

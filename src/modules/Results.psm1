@@ -23,8 +23,38 @@ function New-WCAResult {
         Errors          = @()
         Recommendations = @()
         Details         = @()
+        ExecutionLog    = @()
         Duration        = 0
     }
+}
+
+function Add-WCAExecutionLog {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        [object]$Result,
+        [Parameter(Mandatory)]
+        [ValidateSet('Delete','Skip','Service')]
+        [string]$Action,
+        [Parameter(Mandatory)]
+        [ValidateSet('Attempted','Succeeded','Failed','Skipped','Validated')]
+        [string]$Status,
+        [string]$Target = '',
+        [string]$Reason = '',
+        [string]$Operation = ''
+    )
+
+    $entry = [PSCustomObject]@{
+        DateTime  = Get-Date
+        Action    = $Action
+        Status    = $Status
+        Operation = $Operation
+        Target    = $Target
+        Reason    = $Reason
+    }
+
+    $Result.ExecutionLog += $entry
+    return $entry
 }
 
 function ConvertTo-WCAFailureMessage {
@@ -58,4 +88,4 @@ function ConvertTo-WCAFailureMessage {
     return "[$category]$operationText$target`: $text"
 }
 
-Export-ModuleMember -Function New-WCAResult, ConvertTo-WCAFailureMessage
+Export-ModuleMember -Function New-WCAResult, Add-WCAExecutionLog, ConvertTo-WCAFailureMessage

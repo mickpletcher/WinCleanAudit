@@ -33,6 +33,17 @@ function ConvertTo-HtmlText {
     return [System.Net.WebUtility]::HtmlEncode([string]$Value)
 }
 
+function ConvertTo-WCAExecutionLogText {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        [object]$Entry
+    )
+
+    $parts = @($Entry.Action, $Entry.Status, $Entry.Operation, $Entry.Target, $Entry.Reason) | Where-Object { $_ }
+    return $parts -join ' | '
+}
+
 function New-WinCleanReport {
     [CmdletBinding()]
     param(
@@ -145,6 +156,13 @@ function Write-MarkdownReport {
             $lines += 'Recommendations:'
             foreach ($item in $result.Recommendations) { $lines += "- $item" }
         }
+        if (@($result.ExecutionLog).Count -gt 0) {
+            $lines += ''
+            $lines += 'Execution Log:'
+            foreach ($item in $result.ExecutionLog) {
+                $lines += "- $(ConvertTo-WCAExecutionLogText -Entry $item)"
+            }
+        }
     }
 
     $lines | Set-Content -Path $path -Encoding utf8
@@ -187,6 +205,12 @@ function Write-HtmlReport {
                 $heading = $name -replace '([a-z])([A-Z])', '$1 $2'
                 $listBlocks += '<h3>{0}</h3><ul>{1}</ul>' -f $heading, ($items -join '')
             }
+        }
+        if (@($result.ExecutionLog).Count -gt 0) {
+            $items = foreach ($item in $result.ExecutionLog) {
+                '<li>{0}</li>' -f (ConvertTo-HtmlText (ConvertTo-WCAExecutionLogText -Entry $item))
+            }
+            $listBlocks += '<h3>Execution Log</h3><ul>{0}</ul>' -f ($items -join '')
         }
 
         @"
@@ -311,6 +335,7 @@ function Write-CsvReport {
             Warnings          = @($result.Warnings) -join '; '
             Errors            = @($result.Errors) -join '; '
             Recommendations   = @($result.Recommendations) -join '; '
+            ExecutionLogCount = @($result.ExecutionLog).Count
             Duration          = $result.Duration
         }
     }

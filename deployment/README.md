@@ -15,6 +15,9 @@ Example install command:
 powershell.exe -ExecutionPolicy Bypass -File .\deployment\intune\install.ps1 -RegisterScheduledTask
 ```
 
+When scheduled task registration is enabled, the task runs DryRun with
+`-NoBrowserLaunch`, JSON export, CSV export, and the enterprise report path.
+
 ## ConfigMgr
 
 Use `deployment/configmgr/install.ps1` as the application install command.
@@ -26,6 +29,9 @@ Example install command:
 ```powershell
 powershell.exe -ExecutionPolicy Bypass -File .\deployment\configmgr\install.ps1 -RegisterScheduledTask
 ```
+
+When scheduled task registration is enabled, the task runs DryRun with
+`-NoBrowserLaunch`, JSON export, CSV export, and the enterprise report path.
 
 ## Policy Profiles
 

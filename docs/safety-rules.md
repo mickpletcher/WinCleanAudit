@@ -29,6 +29,9 @@ Never clean content from:
 - Locked file conditions are captured and skipped.
 - Missing paths are classified and reported.
 - Service control errors are classified and reported.
+- Execute mode records attempted deletes, skipped cleanup items, and service
+  actions in ExecutionLog.
+- Windows Update cache cleanup validates restarted services.
 - Module failure does not stop the full run.
 
 ## Testing Safety
@@ -54,4 +57,5 @@ Never clean content from:
 - Errors
 - Recommendations
 - Details
+- ExecutionLog
 - Duration

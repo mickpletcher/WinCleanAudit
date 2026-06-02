@@ -74,11 +74,20 @@ function Clear-WindowsUpdateCache {
             if ($service -and $service.Status -eq 'Running') {
                 $runningBefore += $svc
                 try {
+                    Add-WCAExecutionLog -Result $result -Action 'Service' -Status 'Attempted' -Target $svc -Operation 'Stop service' | Out-Null
                     Stop-Service -Name $svc -Force -ErrorAction Stop
+                    Add-WCAExecutionLog -Result $result -Action 'Service' -Status 'Succeeded' -Target $svc -Operation 'Stop service' | Out-Null
                 }
                 catch {
+                    Add-WCAExecutionLog -Result $result -Action 'Service' -Status 'Failed' -Target $svc -Operation 'Stop service' -Reason $_.Exception.Message | Out-Null
                     $result.Warnings += ConvertTo-WCAFailureMessage -Message $_.Exception.Message -Path $svc -Operation 'Stop service'
                 }
+            }
+            elseif ($service) {
+                Add-WCAExecutionLog -Result $result -Action 'Service' -Status 'Skipped' -Target $svc -Operation 'Stop service' -Reason "Service status is $($service.Status)" | Out-Null
+            }
+            else {
+                Add-WCAExecutionLog -Result $result -Action 'Service' -Status 'Skipped' -Target $svc -Operation 'Stop service' -Reason 'Service not found' | Out-Null
             }
         }
 
@@ -88,12 +97,15 @@ function Clear-WindowsUpdateCache {
             $result.EstimatedBytes += $size
             try {
                 if ($PSCmdlet.ShouldProcess($_.FullName, 'Remove cache child item')) {
+                    Add-WCAExecutionLog -Result $result -Action 'Delete' -Status 'Attempted' -Target $_.FullName -Operation 'Remove Windows Update cache item' | Out-Null
                     Remove-Item -LiteralPath $_.FullName -Recurse -Force -ErrorAction Stop
+                    Add-WCAExecutionLog -Result $result -Action 'Delete' -Status 'Succeeded' -Target $_.FullName -Operation 'Remove Windows Update cache item' | Out-Null
                     $result.ItemsModified++
                     $result.RecoveredBytes += $size
                 }
             }
             catch {
+                Add-WCAExecutionLog -Result $result -Action 'Delete' -Status 'Failed' -Target $_.FullName -Operation 'Remove Windows Update cache item' -Reason $_.Exception.Message | Out-Null
                 $result.Warnings += ConvertTo-WCAFailureMessage -Message $_.Exception.Message -Path $_.FullName -Operation 'Remove Windows Update cache item'
             }
         }
@@ -105,10 +117,23 @@ function Clear-WindowsUpdateCache {
     finally {
         foreach ($svc in $runningBefore) {
             try {
+                Add-WCAExecutionLog -Result $result -Action 'Service' -Status 'Attempted' -Target $svc -Operation 'Start service' | Out-Null
                 Start-Service -Name $svc -ErrorAction Stop
+                Add-WCAExecutionLog -Result $result -Action 'Service' -Status 'Succeeded' -Target $svc -Operation 'Start service' | Out-Null
+
+                $service = Get-Service -Name $svc -ErrorAction Stop
+                if ($service.Status -eq 'Running') {
+                    Add-WCAExecutionLog -Result $result -Action 'Service' -Status 'Validated' -Target $svc -Operation 'Validate service restart' -Reason 'Running' | Out-Null
+                }
+                else {
+                    $message = "Service restart validation failed. Current status: $($service.Status)"
+                    Add-WCAExecutionLog -Result $result -Action 'Service' -Status 'Failed' -Target $svc -Operation 'Validate service restart' -Reason $message | Out-Null
+                    $result.Warnings += ConvertTo-WCAFailureMessage -Message $message -Path $svc -Operation 'Validate service restart'
+                }
             }
             catch {
                 $result.Warnings += ConvertTo-WCAFailureMessage -Message $_.Exception.Message -Path $svc -Operation 'Start service'
+                Add-WCAExecutionLog -Result $result -Action 'Service' -Status 'Failed' -Target $svc -Operation 'Start service' -Reason $_.Exception.Message | Out-Null
             }
         }
     }

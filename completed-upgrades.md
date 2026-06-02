@@ -14,6 +14,10 @@ This file lists items from future-upgrades.md that are already implemented.
 - [x] Add a `-NoBrowserLaunch` switch for DryRun automation runs.
 - [x] Add path normalization tests for protected locations and cloud sync
   exclusions.
+- [x] Add a rollback safe execution log that records attempted deletes,
+  skipped items, and service actions.
+- [x] Add explicit service restart validation after Windows Update cache
+  cleanup.
 
 ## Tier 2: Quality and Dev Experience
 

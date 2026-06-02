@@ -74,24 +74,30 @@ function Invoke-TempCleanup {
 
             if (Test-WCAProtectedPath -Path $_.FullName) {
                 $result.Warnings += "Protected path skipped: $($_.FullName)"
+                Add-WCAExecutionLog -Result $result -Action 'Skip' -Status 'Skipped' -Target $_.FullName -Operation 'Remove temp file' -Reason 'Protected path' | Out-Null
                 return
             }
             if ($_.Attributes -band [IO.FileAttributes]::ReparsePoint) {
                 $result.Warnings += "Symlink skipped: $($_.FullName)"
+                Add-WCAExecutionLog -Result $result -Action 'Skip' -Status 'Skipped' -Target $_.FullName -Operation 'Remove temp file' -Reason 'Reparse point' | Out-Null
                 return
             }
             if ($safeExt -notcontains $_.Extension.ToLowerInvariant()) {
+                Add-WCAExecutionLog -Result $result -Action 'Skip' -Status 'Skipped' -Target $_.FullName -Operation 'Remove temp file' -Reason 'Extension not allowed' | Out-Null
                 return
             }
 
             try {
                 if ($PSCmdlet.ShouldProcess($_.FullName, 'Remove temp file')) {
+                    Add-WCAExecutionLog -Result $result -Action 'Delete' -Status 'Attempted' -Target $_.FullName -Operation 'Remove temp file' | Out-Null
                     Remove-Item -LiteralPath $_.FullName -Force -ErrorAction Stop
+                    Add-WCAExecutionLog -Result $result -Action 'Delete' -Status 'Succeeded' -Target $_.FullName -Operation 'Remove temp file' | Out-Null
                     $result.ItemsModified++
                     $result.RecoveredBytes += $_.Length
                 }
             }
             catch {
+                Add-WCAExecutionLog -Result $result -Action 'Delete' -Status 'Failed' -Target $_.FullName -Operation 'Remove temp file' -Reason $_.Exception.Message | Out-Null
                 $result.Warnings += ConvertTo-WCAFailureMessage -Message $_.Exception.Message -Path $_.FullName -Operation 'Remove temp file'
             }
         }

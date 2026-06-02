@@ -58,7 +58,7 @@ Validation performed on June 1, 2026:
 
 * PowerShell syntax check passed for all `.ps1` and `.psm1` files.
 * `.\src\WinCleanAudit.ps1 -DryRun` completed successfully.
-* Pester test suite passed: 46 passed, 0 failed.
+* Pester test suite passed: 59 passed, 0 failed.
 * Markdownlint passed: 12 files checked, 0 errors.
 * DryRun generated Markdown, HTML, JSON, CSV, and log files under `reports/`
   when optional exports were requested.
@@ -74,6 +74,9 @@ Validation performed on June 1, 2026:
   `docs/project-spec.md`, issue templates, and a pull request template.
 * Enterprise policy profiles, deployment templates, scheduled task
   installation, optional Event Log output, and report retention were added.
+* ExecutionLog records attempted deletes, skipped cleanup items, and service
+  actions.
+* Windows Update cache cleanup validates service restart state after cleanup.
 
 ## Git Status Notes
 
@@ -111,6 +114,9 @@ The app enforces these project rules:
 * Module failures should not stop the full run.
 * Access denied, locked file, missing path, and service control failures are
   classified in report output.
+* Execute mode records attempted deletes, skipped cleanup items, and service
+  actions in `ExecutionLog`.
+* Windows Update cache cleanup validates service restart state after cleanup.
 * Modules return structured PowerShell objects.
 * Reports are generated in Markdown.
 * DryRun also generates an HTML report and opens it in the default browser
@@ -138,6 +144,7 @@ Modules should return this shape:
     Errors          = @()
     Recommendations = @()
     Details         = @()
+    ExecutionLog    = @()
     Duration        = 0
 }
 ```
@@ -190,7 +197,8 @@ Priority: handled.
 ### 4. Tests pass but are still mostly contract-level
 
 The Pester suite validates imports, DryRun behavior, basic output shape,
-guards, failure classification, and protected path normalization.
+guards, failure classification, protected path normalization, execution log
+entries, and Windows Update service restart validation.
 
 It does not deeply test edge cases for every destructive path, locked files,
 registry view behavior, browser profile exclusions, or large directory
@@ -228,10 +236,9 @@ Before the first commit:
 Before trusting `-Execute` broadly:
 
 1. Add deeper mocked tests for destructive paths.
-2. Add tests for service restart failure in Windows Update cache cleanup.
-3. Add tests proving browser cache cleanup cannot touch cookies, passwords,
+2. Add tests proving browser cache cleanup cannot touch cookies, passwords,
    bookmarks, profiles, or extensions.
-4. Add tests proving protected folders and source-code folders are excluded
+3. Add tests proving protected folders and source-code folders are excluded
    by cleanup modules.
 
 ## Next Step

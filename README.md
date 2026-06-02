@@ -187,6 +187,7 @@ The report includes:
 * Warnings
 * Errors
 * Recommendations
+* ExecutionLog entries for execute mode delete, skip, and service actions
 
 Optional JSON and CSV reports use the same timestamp as the Markdown report.
 
@@ -202,6 +203,8 @@ For a normal first run, look for:
 Some checks work better when PowerShell is run as administrator.
 
 Windows Update cache cleanup requires administrator rights in execute mode.
+It validates that services running before cleanup are running again after
+restart.
 
 For normal review, start without admin rights and use `-DryRun`.
 
@@ -213,12 +216,14 @@ Run tests with:
 Invoke-Pester -Path .\tests\Pester
 ```
 
-The test suite checks imports, DryRun behavior, output shape, and safety guards.
+The test suite checks imports, DryRun behavior, output shape, safety guards,
+failure classification, protected path normalization, execution log entries,
+and Windows Update service restart validation.
 
 Current validation status:
 
 ```text
-46 tests passed
+59 tests passed
 0 tests failed
 ```
 
@@ -285,6 +290,10 @@ output.
 
 ## Enterprise Deployment
 
+Enterprise admin guidance is here:
+
+[enterprisereadmin.md](enterprisereadmin.md)
+
 Deployment templates are here:
 
 [deployment/README.md](deployment/README.md)
@@ -294,6 +303,9 @@ The scheduled task installer is here:
 ```powershell
 .\src\Install-WinCleanAuditScheduledTask.ps1 -Frequency Weekly -JsonReport -CsvReport
 ```
+
+Scheduled DryRun tasks include `-NoBrowserLaunch` so automation does not open
+the HTML report interactively.
 
 Report retention is disabled by default.
 Enable it in `tasks/windows-cleanup.yaml` when old generated files should be
@@ -324,7 +336,9 @@ Repo changes are tracked here:
 * Some inventory data depends on Windows version and user permissions.
 * Browser cache cleanup may skip locked files if browsers are open.
 * Windows Update cache cleanup requires administrator rights.
-* Tests currently focus on contracts and safety guards.
+* Tests cover contracts, safety guards, protected paths, failure
+  classification, execution logging, and Windows Update service restart
+  validation.
   More destructive-path mock coverage is recommended before broad
   `-Execute` use.
 

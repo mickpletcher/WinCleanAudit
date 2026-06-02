@@ -57,14 +57,17 @@ function Clear-WinCleanRecycleBin {
 
     try {
         if ($PSCmdlet.ShouldProcess('Recycle Bin', 'Clear-RecycleBin')) {
+            Add-WCAExecutionLog -Result $result -Action 'Delete' -Status 'Attempted' -Target 'Recycle Bin' -Operation 'Clear-RecycleBin' | Out-Null
             Clear-RecycleBin -Force -ErrorAction Stop
+            Add-WCAExecutionLog -Result $result -Action 'Delete' -Status 'Succeeded' -Target 'Recycle Bin' -Operation 'Clear-RecycleBin' | Out-Null
             $result.ActionsTaken += 'Recycle Bin emptied.'
             $result.ItemsModified = 1
         }
     }
     catch {
         $result.Status = 'Warning'
-        $result.Errors += $_.Exception.Message
+        Add-WCAExecutionLog -Result $result -Action 'Delete' -Status 'Failed' -Target 'Recycle Bin' -Operation 'Clear-RecycleBin' -Reason $_.Exception.Message | Out-Null
+        $result.Errors += ConvertTo-WCAFailureMessage -Message $_.Exception.Message -Path 'Recycle Bin' -Operation 'Clear-RecycleBin'
     }
 
     $result.Duration = [Math]::Round(((Get-Date) - $start).TotalSeconds, 3)

@@ -37,6 +37,12 @@ Module failures must be reported and must not stop the full run.
 
 Execute mode must still respect protected path rules.
 
+Execute mode records attempted deletes, skipped cleanup items, and service
+actions in `ExecutionLog`.
+
+Windows Update cache cleanup validates that services running before cleanup are
+running again after restart.
+
 ## Report Contract
 
 Markdown reports are always written.
@@ -82,6 +88,7 @@ Each module returns a structured result object:
     Errors          = @()
     Recommendations = @()
     Details         = @()
+    ExecutionLog    = @()
     Duration        = 0
 }
 ```
