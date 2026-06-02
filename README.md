@@ -80,6 +80,12 @@ Safe audit mode.
 Use this first. It scans, writes reports, and opens the HTML report in your
 browser. It does not delete anything.
 
+For automation, suppress the browser launch:
+
+```powershell
+.\src\WinCleanAudit.ps1 -DryRun -NoBrowserLaunch
+```
+
 ### Execute
 
 Cleanup mode.

@@ -9,6 +9,12 @@
 DryRun writes Markdown and HTML reports.
 The HTML report opens in your default browser.
 
+## DryRun Without Browser Launch
+
+```powershell
+.\src\WinCleanAudit.ps1 -DryRun -NoBrowserLaunch
+```
+
 ## Execute With Confirmation
 
 ```powershell

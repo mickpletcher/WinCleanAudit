@@ -21,6 +21,17 @@ function Get-WCAProtectedLocations {
     return $locations
 }
 
+function Normalize-WCAPath {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        [string]$Path
+    )
+
+    $expanded = [Environment]::ExpandEnvironmentVariables($Path.Trim('"'))
+    return [System.IO.Path]::GetFullPath($expanded).TrimEnd([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar)
+}
+
 function Test-WCAProtectedPath {
     [CmdletBinding()]
     param(
@@ -29,7 +40,7 @@ function Test-WCAProtectedPath {
     )
 
     try {
-        $resolved = [System.IO.Path]::GetFullPath($Path)
+        $resolved = Normalize-WCAPath -Path $Path
     }
     catch {
         return $true
@@ -37,8 +48,11 @@ function Test-WCAProtectedPath {
 
     foreach ($protected in Get-WCAProtectedLocations) {
         try {
-            $target = [System.IO.Path]::GetFullPath($protected)
-            if ($resolved.StartsWith($target, [System.StringComparison]::OrdinalIgnoreCase)) {
+            $target = Normalize-WCAPath -Path $protected
+            $isSamePath = [string]::Equals($resolved, $target, [System.StringComparison]::OrdinalIgnoreCase)
+            $isChildPath = $resolved.StartsWith("$target$([IO.Path]::DirectorySeparatorChar)", [System.StringComparison]::OrdinalIgnoreCase) -or
+                $resolved.StartsWith("$target$([IO.Path]::AltDirectorySeparatorChar)", [System.StringComparison]::OrdinalIgnoreCase)
+            if ($isSamePath -or $isChildPath) {
                 return $true
             }
         }
@@ -49,6 +63,9 @@ function Test-WCAProtectedPath {
 
     $parts = $resolved.Split([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar)
     if ($parts -contains '.git' -or $parts -contains 'src' -or $parts -contains 'source') {
+        return $true
+    }
+    if ($parts | Where-Object { $_ -eq 'Dropbox' -or $_ -eq 'Google Drive' -or $_ -eq 'OneDrive' -or $_ -like 'OneDrive - *' }) {
         return $true
     }
 
@@ -76,4 +93,4 @@ function Confirm-WCAAction {
     return $answer -match '^(y|yes)$'
 }
 
-Export-ModuleMember -Function Confirm-WCAAction, Test-WCAProtectedPath, Get-WCAProtectedLocations
+Export-ModuleMember -Function Confirm-WCAAction, Test-WCAProtectedPath, Get-WCAProtectedLocations, Normalize-WCAPath

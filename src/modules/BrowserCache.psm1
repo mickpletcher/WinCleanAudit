@@ -24,7 +24,7 @@ function Get-BrowserCacheSummary {
 
     foreach ($entry in Get-WCABrowserCachePaths) {
         if (-not (Test-Path $entry.Path)) {
-            $result.Warnings += "Cache path not found for $($entry.Browser)"
+            $result.Warnings += ConvertTo-WCAFailureMessage -Message "Cache path not found for $($entry.Browser)" -Path $entry.Path
             continue
         }
 
@@ -40,7 +40,7 @@ function Get-BrowserCacheSummary {
             $result.Details += [PSCustomObject]@{ Browser = $entry.Browser; Path = $entry.Path; Items = $count; Bytes = $bytes }
         }
         catch {
-            $result.Warnings += "Failed to scan $($entry.Browser) cache."
+            $result.Warnings += ConvertTo-WCAFailureMessage -Message $_.Exception.Message -Path $entry.Path -Operation "Scan $($entry.Browser) cache"
         }
     }
 
@@ -84,7 +84,10 @@ function Clear-BrowserCache {
     $blockedNames = @('Bookmarks','Cookies','Login Data','History','Preferences')
 
     foreach ($entry in Get-WCABrowserCachePaths) {
-        if (-not (Test-Path $entry.Path)) { continue }
+        if (-not (Test-Path $entry.Path)) {
+            $result.Warnings += ConvertTo-WCAFailureMessage -Message "Cache path not found for $($entry.Browser)" -Path $entry.Path
+            continue
+        }
         Get-ChildItem -Path $entry.Path -File -Recurse -ErrorAction SilentlyContinue | ForEach-Object {
             $result.ItemsScanned++
             $result.EstimatedBytes += $_.Length
@@ -101,7 +104,7 @@ function Clear-BrowserCache {
                 }
             }
             catch {
-                $result.Warnings += "Skipped locked cache file: $($_.FullName)"
+                $result.Warnings += ConvertTo-WCAFailureMessage -Message $_.Exception.Message -Path $_.FullName -Operation 'Remove browser cache file'
             }
         }
     }

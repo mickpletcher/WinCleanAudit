@@ -41,6 +41,11 @@ project will eventually contain.
 * Added Intune and ConfigMgr deployment templates under `deployment/`.
 * Added optional Windows Event Log output for enterprise monitoring.
 * Added optional report retention cleanup for old generated reports and logs.
+* Added failure classification for access denied, locked file, missing path,
+  and service control errors.
+* Added `-NoBrowserLaunch` for DryRun automation scenarios.
+* Added path normalization tests for protected locations and cloud sync
+  exclusions.
 
 ### Changed
 

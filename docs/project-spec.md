@@ -29,6 +29,8 @@ Cleanup requires explicit `-Execute`.
 
 `-NoPrompt` is allowed only with `-Execute`.
 
+`-NoBrowserLaunch` suppresses the DryRun HTML browser launch for automation.
+
 Protected paths are always excluded.
 
 Module failures must be reported and must not stop the full run.
@@ -39,7 +41,8 @@ Execute mode must still respect protected path rules.
 
 Markdown reports are always written.
 
-DryRun also writes an HTML report and opens it in the default browser.
+DryRun also writes an HTML report and opens it in the default browser unless
+`-NoBrowserLaunch` is used.
 
 JSON and CSV reports are optional and are written only when requested.
 

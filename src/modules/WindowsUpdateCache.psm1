@@ -14,7 +14,7 @@ function Get-WindowsUpdateCacheInfo {
 
     if (-not (Test-Path $path)) {
         $result.Status = 'Skipped'
-        $result.Warnings += 'Windows Update cache folder not found.'
+        $result.Warnings += ConvertTo-WCAFailureMessage -Message 'Windows Update cache folder not found.' -Path $path
         $result.Duration = [Math]::Round(((Get-Date) - $start).TotalSeconds, 3)
         return $result
     }
@@ -27,7 +27,7 @@ function Get-WindowsUpdateCacheInfo {
     }
     catch {
         $result.Status = 'Warning'
-        $result.Errors += $_.Exception.Message
+        $result.Errors += ConvertTo-WCAFailureMessage -Message $_.Exception.Message -Path $path -Operation 'Scan Windows Update cache'
     }
 
     $result.ActionsTaken += 'Audit only. No cache files removed.'
@@ -73,7 +73,12 @@ function Clear-WindowsUpdateCache {
             $service = Get-Service -Name $svc -ErrorAction SilentlyContinue
             if ($service -and $service.Status -eq 'Running') {
                 $runningBefore += $svc
-                Stop-Service -Name $svc -Force -ErrorAction SilentlyContinue
+                try {
+                    Stop-Service -Name $svc -Force -ErrorAction Stop
+                }
+                catch {
+                    $result.Warnings += ConvertTo-WCAFailureMessage -Message $_.Exception.Message -Path $svc -Operation 'Stop service'
+                }
             }
         }
 
@@ -89,17 +94,22 @@ function Clear-WindowsUpdateCache {
                 }
             }
             catch {
-                $result.Warnings += "Skipped locked item: $($_.FullName)"
+                $result.Warnings += ConvertTo-WCAFailureMessage -Message $_.Exception.Message -Path $_.FullName -Operation 'Remove Windows Update cache item'
             }
         }
     }
     catch {
         $result.Status = 'Error'
-        $result.Errors += $_.Exception.Message
+        $result.Errors += ConvertTo-WCAFailureMessage -Message $_.Exception.Message -Path $path -Operation 'Clear Windows Update cache'
     }
     finally {
         foreach ($svc in $runningBefore) {
-            try { Start-Service -Name $svc -ErrorAction SilentlyContinue } catch { }
+            try {
+                Start-Service -Name $svc -ErrorAction Stop
+            }
+            catch {
+                $result.Warnings += ConvertTo-WCAFailureMessage -Message $_.Exception.Message -Path $svc -Operation 'Start service'
+            }
         }
     }
 

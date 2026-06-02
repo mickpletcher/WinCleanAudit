@@ -26,6 +26,7 @@ $arguments = @(
     '-File',
     "`"$ScriptPath`"",
     '-DryRun',
+    '-NoBrowserLaunch',
     '-ConfigPath',
     "`"$ConfigPath`"",
     '-ReportPath',

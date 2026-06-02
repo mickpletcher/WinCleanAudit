@@ -9,6 +9,11 @@ This file lists items from future-upgrades.md that are already implemented.
 - [x] Use a shared structured result contract across modules.
 - [x] Resolve pipeline module entry points from configuration instead of a
   hard-coded dispatch map.
+- [x] Classify access denied, locked file, missing path, and service control
+  failures in report output.
+- [x] Add a `-NoBrowserLaunch` switch for DryRun automation runs.
+- [x] Add path normalization tests for protected locations and cloud sync
+  exclusions.
 
 ## Tier 2: Quality and Dev Experience
 

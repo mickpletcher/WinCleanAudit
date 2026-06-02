@@ -12,7 +12,7 @@ function Get-OldLogSummary {
 
     foreach ($path in $paths) {
         if (-not (Test-Path $path)) {
-            $result.Warnings += "Path missing: $path"
+            $result.Warnings += ConvertTo-WCAFailureMessage -Message "Path missing: $path" -Path $path
             continue
         }
 
@@ -26,7 +26,7 @@ function Get-OldLogSummary {
             }
         }
         catch {
-            $result.Warnings += "Scan warning for ${path}: $($_.Exception.Message)"
+            $result.Warnings += ConvertTo-WCAFailureMessage -Message $_.Exception.Message -Path $path -Operation 'Scan old logs'
         }
     }
 
@@ -82,7 +82,7 @@ function Clear-OldLogs {
             }
         }
         catch {
-            $result.Warnings += "Skip file: $($entry.Path)"
+            $result.Warnings += ConvertTo-WCAFailureMessage -Message $_.Exception.Message -Path $entry.Path -Operation 'Remove old log file'
         }
     }
 

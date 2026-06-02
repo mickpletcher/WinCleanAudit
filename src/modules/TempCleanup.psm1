@@ -8,7 +8,7 @@ function Get-TempCleanupAudit {
 
     foreach ($location in $locations) {
         if (-not $location -or -not (Test-Path $location)) {
-            $result.Warnings += "Location not found: $location"
+            $result.Warnings += ConvertTo-WCAFailureMessage -Message "Location not found: $location" -Path $location
             continue
         }
 
@@ -22,7 +22,7 @@ function Get-TempCleanupAudit {
             }
         }
         catch {
-            $result.Warnings += "Failed to scan ${location}: $($_.Exception.Message)"
+            $result.Warnings += ConvertTo-WCAFailureMessage -Message $_.Exception.Message -Path $location -Operation 'Scan temp location'
         }
     }
 
@@ -63,7 +63,10 @@ function Invoke-TempCleanup {
     }
 
     foreach ($location in $locations) {
-        if (-not $location -or -not (Test-Path $location)) { continue }
+        if (-not $location -or -not (Test-Path $location)) {
+            $result.Warnings += ConvertTo-WCAFailureMessage -Message "Location not found: $location" -Path $location
+            continue
+        }
 
         Get-ChildItem -Path $location -File -Force -Recurse -ErrorAction SilentlyContinue | ForEach-Object {
             $result.ItemsScanned++
@@ -89,7 +92,7 @@ function Invoke-TempCleanup {
                 }
             }
             catch {
-                $result.Warnings += "Failed to remove $($_.FullName): $($_.Exception.Message)"
+                $result.Warnings += ConvertTo-WCAFailureMessage -Message $_.Exception.Message -Path $_.FullName -Operation 'Remove temp file'
             }
         }
     }

@@ -27,6 +27,8 @@ Never clean content from:
 
 - Access denied errors are captured and reported.
 - Locked file conditions are captured and skipped.
+- Missing paths are classified and reported.
+- Service control errors are classified and reported.
 - Module failure does not stop the full run.
 
 ## Testing Safety

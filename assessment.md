@@ -109,9 +109,12 @@ The app enforces these project rules:
 * `-NoPrompt` is rejected unless `-Execute` is also supplied.
 * Protected folders are excluded.
 * Module failures should not stop the full run.
+* Access denied, locked file, missing path, and service control failures are
+  classified in report output.
 * Modules return structured PowerShell objects.
 * Reports are generated in Markdown.
-* DryRun also generates an HTML report and opens it in the default browser.
+* DryRun also generates an HTML report and opens it in the default browser
+  unless `-NoBrowserLaunch` is used.
 * JSON and CSV reports are optional exports.
 * Policy profiles can enable fleet defaults for exports and Event Log output.
 * Report retention can remove old generated files when explicitly enabled.
@@ -187,11 +190,11 @@ Priority: handled.
 ### 4. Tests pass but are still mostly contract-level
 
 The Pester suite validates imports, DryRun behavior, basic output shape,
-and guards.
+guards, failure classification, and protected path normalization.
 
 It does not deeply test edge cases for every destructive path, locked files,
-registry view behavior, browser profile exclusions, service restart failure,
-or large directory performance.
+registry view behavior, browser profile exclusions, or large directory
+performance.
 
 Priority: medium before relying on `-Execute`.
 

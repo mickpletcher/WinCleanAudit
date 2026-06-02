@@ -50,6 +50,13 @@ function Invoke-WCAModule {
     }
     catch {
         $duration = [Math]::Round(((Get-Date) - $start).TotalSeconds, 3)
+        $errorMessage = if (Get-Command ConvertTo-WCAFailureMessage -ErrorAction SilentlyContinue) {
+            ConvertTo-WCAFailureMessage -Message $_.Exception.Message -Operation 'Invoke module'
+        }
+        else {
+            $_.Exception.Message
+        }
+
         [PSCustomObject]@{
             TaskName        = $ModuleName
             Module          = $ModuleName
@@ -61,7 +68,7 @@ function Invoke-WCAModule {
             RecoveredBytes  = [Int64]0
             ActionsTaken    = @()
             Warnings        = @()
-            Errors          = @($_.Exception.Message)
+            Errors          = @($errorMessage)
             Recommendations = @('Review module implementation and retry.')
             Details         = @()
             Duration        = $duration

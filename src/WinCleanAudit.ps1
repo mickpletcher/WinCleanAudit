@@ -3,6 +3,7 @@ param(
     [switch]$DryRun,
     [switch]$Execute,
     [switch]$NoPrompt,
+    [switch]$NoBrowserLaunch,
     [switch]$JsonReport,
     [switch]$CsvReport,
     [string]$ReportPath,
@@ -69,7 +70,9 @@ $writtenHtmlReport = $null
 if ($DryRun) {
     $writtenHtmlReport = Write-HtmlReport -Report $report -OutputFolder $ReportPath -Timestamp $reportStamp
     Write-WCALog -Message "HTML report written: $writtenHtmlReport" -Level 'SUCCESS'
-    Start-Process -FilePath $writtenHtmlReport
+    if (-not $NoBrowserLaunch) {
+        Start-Process -FilePath $writtenHtmlReport
+    }
 }
 
 $writtenJsonReport = $null
