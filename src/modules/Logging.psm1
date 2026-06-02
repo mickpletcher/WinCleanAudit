@@ -3,6 +3,44 @@ $script:WcaLogLevel = 'INFO'
 $script:WcaEventLogEnabled = $false
 $script:WcaEventLogName = 'Application'
 $script:WcaEventLogSource = 'WinCleanAudit'
+$script:WcaEventIds = @{
+    Info                = 1000
+    Success             = 1001
+    Warning             = 2000
+    AccessDenied        = 2101
+    LockedFile          = 2102
+    MissingPath         = 2103
+    ServiceControlError = 2104
+    GeneralError        = 3000
+}
+
+function Get-WCAEventId {
+    [CmdletBinding()]
+    param(
+        [ValidateSet('DEBUG','INFO','WARNING','ERROR','SUCCESS')]
+        [string]$Level = 'INFO',
+        [string]$FailureCategory = '',
+        [string]$Message = ''
+    )
+
+    if ($FailureCategory -and $script:WcaEventIds.ContainsKey($FailureCategory)) {
+        return $script:WcaEventIds[$FailureCategory]
+    }
+    if ($Message -match '^\[(AccessDenied|LockedFile|MissingPath|ServiceControlError|GeneralError)\]') {
+        return $script:WcaEventIds[$matches[1]]
+    }
+    if ($Level -eq 'SUCCESS') {
+        return $script:WcaEventIds.Success
+    }
+    if ($Level -eq 'WARNING') {
+        return $script:WcaEventIds.Warning
+    }
+    if ($Level -eq 'ERROR') {
+        return $script:WcaEventIds.GeneralError
+    }
+
+    return $script:WcaEventIds.Info
+}
 
 function Initialize-WCALogging {
     [CmdletBinding()]
@@ -48,7 +86,9 @@ function Write-WCALog {
         [Parameter(Mandatory)]
         [string]$Message,
         [ValidateSet('DEBUG','INFO','WARNING','ERROR','SUCCESS')]
-        [string]$Level = 'INFO'
+        [string]$Level = 'INFO',
+        [ValidateSet('','AccessDenied','LockedFile','MissingPath','ServiceControlError','GeneralError')]
+        [string]$FailureCategory = ''
     )
 
     $line = "$(Get-Date -Format s) [$Level] $Message"
@@ -63,7 +103,8 @@ function Write-WCALog {
             default { 'Information' }
         }
         try {
-            Write-EventLog -LogName $script:WcaEventLogName -Source $script:WcaEventLogSource -EntryType $entryType -EventId 1000 -Message $Message -ErrorAction Stop
+            $eventId = Get-WCAEventId -Level $Level -FailureCategory $FailureCategory -Message $Message
+            Write-EventLog -LogName $script:WcaEventLogName -Source $script:WcaEventLogSource -EntryType $entryType -EventId $eventId -Message $Message -ErrorAction Stop
         }
         catch {
             $script:WcaEventLogEnabled = $false
@@ -92,4 +133,4 @@ function Close-WCALog {
     }
 }
 
-Export-ModuleMember -Function Initialize-WCALogging, Write-WCALog, Write-WCAError, Close-WCALog
+Export-ModuleMember -Function Initialize-WCALogging, Write-WCALog, Write-WCAError, Close-WCALog, Get-WCAEventId

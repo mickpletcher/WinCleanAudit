@@ -17,6 +17,13 @@ Run all tests:
 Invoke-Pester -Path .\tests\Pester
 ```
 
+Current expected full suite result:
+
+```text
+63 tests passed
+0 tests failed
+```
+
 Run one test file:
 
 ```powershell
@@ -30,3 +37,5 @@ Safety model for tests:
   old logs, or update cache.
 - Tests must not modify startup entries, installed applications, or disks.
 - Temporary fixtures should use isolated test paths only.
+- Detection and compliance scripts should be syntax checked without modifying
+  scheduled tasks during tests.

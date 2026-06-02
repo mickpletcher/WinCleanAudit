@@ -59,6 +59,34 @@ execution:
 
 The scheduled task runs DryRun with `-NoBrowserLaunch`.
 
+## Enterprise Detection
+
+Use these for managed deployment detection:
+
+```text
+deployment/intune/detect.ps1
+deployment/configmgr/detection-method.ps1
+```
+
+Both detection scripts check script presence, config presence, scheduled task
+registration, and recent JSON report generation.
+
+## ConfigMgr Compliance Baseline
+
+Examples are here:
+
+```text
+deployment/configmgr/compliance-baseline/
+```
+
+## Packaging Templates
+
+Managed packaging templates are here:
+
+```text
+deployment/packaging/
+```
+
 ## Module Notes
 
 - Temp cleanup audits approved temp folders in DryRun.

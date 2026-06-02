@@ -50,6 +50,9 @@ Protected locations are excluded:
 - Git repositories
 - Source code folders
 
+Redirected known folders and enterprise Folder Redirection paths are also
+protected when they are present in the current user shell folder registry keys.
+
 Execute mode records attempted deletes, skipped cleanup items, and service
 actions in `ExecutionLog`.
 
@@ -117,6 +120,9 @@ The scheduled task runs DryRun with:
 - CSV export
 - Enterprise report path
 
+The detection script verifies script presence, config presence, scheduled task
+registration, and recent JSON report generation.
+
 Package the repository content with the Intune Win32 Content Prep Tool.
 
 Target a pilot group first.
@@ -135,6 +141,12 @@ Use the detection method:
 
 ```text
 deployment/configmgr/detection-method.ps1
+```
+
+Compliance baseline examples are here:
+
+```text
+deployment/configmgr/compliance-baseline/
 ```
 
 Deploy to a pilot collection first.
@@ -179,6 +191,37 @@ copy jobs, or your existing reporting pipeline.
 Generated reports and logs are ignored by git.
 
 Do not commit endpoint reports.
+
+## Event Log Mapping
+
+When Event Log output is enabled, WinCleanAudit maps failure categories to
+event IDs:
+
+| Category | Event ID |
+| --- | ---: |
+| Info | 1000 |
+| Success | 1001 |
+| Warning | 2000 |
+| AccessDenied | 2101 |
+| LockedFile | 2102 |
+| MissingPath | 2103 |
+| ServiceControlError | 2104 |
+| GeneralError | 3000 |
+
+## Managed Packaging
+
+Packaging templates are here:
+
+```text
+deployment/packaging/
+```
+
+The folder includes winget style manifests and a WiX MSI template.
+
+Treat them as release packaging starters.
+
+Update release URLs, hashes, publisher metadata, upgrade codes, and signing
+before production use.
 
 ## Execute Mode Guidance
 
@@ -226,7 +269,7 @@ Invoke-Pester -Path .\tests\Pester -CI
 Expected current result:
 
 ```text
-59 tests passed
+63 tests passed
 0 tests failed
 ```
 

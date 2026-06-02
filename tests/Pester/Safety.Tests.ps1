@@ -7,6 +7,7 @@ Describe 'Safety' {
         Get-Command Confirm-WCAAction -ErrorAction Stop | Should -Not -BeNullOrEmpty
         Get-Command Test-WCAProtectedPath -ErrorAction Stop | Should -Not -BeNullOrEmpty
         Get-Command Get-WCAProtectedLocations -ErrorAction Stop | Should -Not -BeNullOrEmpty
+        Get-Command Get-WCARedirectedKnownFolderLocations -ErrorAction Stop | Should -Not -BeNullOrEmpty
         Get-Command Normalize-WCAPath -ErrorAction Stop | Should -Not -BeNullOrEmpty
     }
 
@@ -36,5 +37,33 @@ Describe 'Safety' {
         Test-WCAProtectedPath -Path (Join-Path $userProfile 'OneDrive - Contoso\cleanup.tmp') | Should -BeTrue
         Test-WCAProtectedPath -Path (Join-Path $userProfile 'Dropbox\cleanup.tmp') | Should -BeTrue
         Test-WCAProtectedPath -Path (Join-Path $userProfile 'Google Drive\cleanup.tmp') | Should -BeTrue
+    }
+
+    It 'returns redirected known folder registry paths' {
+        InModuleScope Safety {
+            Mock Get-ItemProperty {
+                [PSCustomObject]@{
+                    Personal = '\\fileserver\users\mick\Documents'
+                    Desktop = '%USERPROFILE%\RedirectedDesktop'
+                }
+            }
+
+            $locations = Get-WCARedirectedKnownFolderLocations
+
+            $locations | Should -Contain '\\fileserver\users\mick\Documents'
+            $locations | Should -Contain "$env:USERPROFILE\RedirectedDesktop"
+        }
+    }
+
+    It 'treats redirected known folder child paths as protected' {
+        InModuleScope Safety {
+            Mock Get-ItemProperty {
+                [PSCustomObject]@{
+                    Personal = '\\fileserver\users\mick\Documents'
+                }
+            }
+
+            Test-WCAProtectedPath -Path '\\fileserver\users\mick\Documents\cleanup.tmp' | Should -BeTrue
+        }
     }
 }

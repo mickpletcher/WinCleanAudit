@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package
+    Name="WinCleanAudit"
+    Manufacturer="Mick Pletcher"
+    Version="1.0.0"
+    UpgradeCode="PUT-GENERATED-UPGRADE-CODE-HERE">
+    <MajorUpgrade DowngradeErrorMessage="A newer version of WinCleanAudit is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Feature Id="Main" Title="WinCleanAudit" Level="1">
+      <ComponentGroupRef Id="WinCleanAuditFiles" />
+    </Feature>
+  </Package>
+
+  <Fragment>
+    <StandardDirectory Id="ProgramFilesFolder">
+      <Directory Id="INSTALLFOLDER" Name="WinCleanAudit" />
+    </StandardDirectory>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="WinCleanAuditFiles" Directory="INSTALLFOLDER">
+      <Component>
+        <File Source="..\..\..\src\WinCleanAudit.ps1" />
+      </Component>
+      <Component>
+        <File Source="..\..\..\src\Install-WinCleanAuditScheduledTask.ps1" />
+      </Component>
+      <Component>
+        <File Source="..\..\..\tasks\windows-cleanup.yaml" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

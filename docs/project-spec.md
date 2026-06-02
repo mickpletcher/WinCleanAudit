@@ -33,6 +33,9 @@ Cleanup requires explicit `-Execute`.
 
 Protected paths are always excluded.
 
+Redirected known folders and enterprise Folder Redirection paths are protected
+when current user shell folder registry values expose them.
+
 Module failures must be reported and must not stop the full run.
 
 Execute mode must still respect protected path rules.
@@ -67,7 +70,15 @@ Scheduled task installation is optional and managed by
 
 Intune and ConfigMgr starter templates live under `deployment/`.
 
+ConfigMgr compliance baseline examples live under
+`deployment/configmgr/compliance-baseline/`.
+
+MSI and winget style packaging templates live under `deployment/packaging/`.
+
 Windows Event Log output is optional and disabled by default.
+
+When enabled, Event Log output uses category specific event IDs for common
+failure categories.
 
 ## Module Contract
 

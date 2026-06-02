@@ -1,0 +1,9 @@
+PackageIdentifier: MickPletcher.WinCleanAudit
+PackageVersion: 1.0.0
+InstallerType: zip
+Installers:
+  - Architecture: x64
+    InstallerUrl: https://example.invalid/WinCleanAudit-1.0.0.zip
+    InstallerSha256: REPLACE_WITH_RELEASE_ZIP_SHA256
+ManifestType: installer
+ManifestVersion: 1.6.0

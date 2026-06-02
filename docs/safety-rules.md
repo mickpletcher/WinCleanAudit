@@ -20,6 +20,8 @@ Never clean content from:
 - OneDrive
 - Dropbox
 - Google Drive
+- Redirected known folders
+- Enterprise Folder Redirection paths
 - Git repositories
 - Source code folders
 
@@ -29,6 +31,7 @@ Never clean content from:
 - Locked file conditions are captured and skipped.
 - Missing paths are classified and reported.
 - Service control errors are classified and reported.
+- Event Log output uses category specific event IDs when enabled.
 - Execute mode records attempted deletes, skipped cleanup items, and service
   actions in ExecutionLog.
 - Windows Update cache cleanup validates restarted services.

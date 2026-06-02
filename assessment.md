@@ -18,7 +18,9 @@ The core app, modules, tests, docs, workflows, and prompt files are present.
 │   └── workflows/
 ├── deployment/
 │   ├── configmgr/
-│   └── intune/
+│   │   └── compliance-baseline/
+│   ├── intune/
+│   └── packaging/
 ├── docs/
 │   ├── project-spec.md
 │   ├── roadmap.md
@@ -38,6 +40,7 @@ The core app, modules, tests, docs, workflows, and prompt files are present.
 ├── assessment.md
 ├── changelog.md
 ├── completed-upgrades.md
+├── enterprisereadmin.md
 └── github-copilot-implementation-prompt.md
 ```
 
@@ -56,10 +59,10 @@ Implementation status: generated and smoke-tested.
 
 Validation performed on June 1, 2026:
 
-* PowerShell syntax check passed for all `.ps1` and `.psm1` files.
+* PowerShell syntax check passed for 43 `.ps1` and `.psm1` files.
 * `.\src\WinCleanAudit.ps1 -DryRun` completed successfully.
-* Pester test suite passed: 59 passed, 0 failed.
-* Markdownlint passed: 12 files checked, 0 errors.
+* Pester test suite passed: 63 passed, 0 failed.
+* Markdownlint passed: 17 files checked, 0 errors.
 * DryRun generated Markdown, HTML, JSON, CSV, and log files under `reports/`
   when optional exports were requested.
 * `README.md` was rewritten for novice users with safer first-run guidance.
@@ -77,6 +80,17 @@ Validation performed on June 1, 2026:
 * ExecutionLog records attempted deletes, skipped cleanup items, and service
   actions.
 * Windows Update cache cleanup validates service restart state after cleanup.
+* Redirected known folders and enterprise Folder Redirection paths are
+  protected.
+* Intune detection verifies script presence, config presence, scheduled task
+  registration, and recent report generation.
+* ConfigMgr compliance baseline examples were added for recurring audit
+  status.
+* Event Log output maps common failure categories to dedicated event IDs.
+* MSI and winget style packaging templates were added for managed deployment.
+* Comment based `Get-Help` data was updated for the main script, scheduled
+  task installer, Intune scripts, ConfigMgr scripts, and compliance baseline
+  examples.
 
 ## Git Status Notes
 
@@ -111,6 +125,8 @@ The app enforces these project rules:
 * Cleanup requires explicit `-Execute`.
 * `-NoPrompt` is rejected unless `-Execute` is also supplied.
 * Protected folders are excluded.
+* Redirected known folders and enterprise Folder Redirection paths are
+  protected when exposed by current user shell folder registry values.
 * Module failures should not stop the full run.
 * Access denied, locked file, missing path, and service control failures are
   classified in report output.
@@ -123,6 +139,7 @@ The app enforces these project rules:
   unless `-NoBrowserLaunch` is used.
 * JSON and CSV reports are optional exports.
 * Policy profiles can enable fleet defaults for exports and Event Log output.
+* Event Log output can use category specific event IDs.
 * Report retention can remove old generated files when explicitly enabled.
 
 ## Standard Result Contract
@@ -197,8 +214,9 @@ Priority: handled.
 ### 4. Tests pass but are still mostly contract-level
 
 The Pester suite validates imports, DryRun behavior, basic output shape,
-guards, failure classification, protected path normalization, execution log
-entries, and Windows Update service restart validation.
+guards, failure classification, protected path normalization, redirected known
+folder protection, execution log entries, Event Log event ID mapping, and
+Windows Update service restart validation.
 
 It does not deeply test edge cases for every destructive path, locked files,
 registry view behavior, browser profile exclusions, or large directory

@@ -9,16 +9,59 @@ $script:ProtectedNames = @(
     'Google Drive'
 )
 
+$script:KnownFolderRegistryNames = @(
+    'Desktop',
+    'Personal',
+    'My Pictures',
+    'My Video',
+    'My Music',
+    '{754AC886-DF64-4CBA-86B5-F7FBF4FBCEF5}',
+    '{F42EE2D3-909F-4907-8871-4C22FC0BF756}',
+    '{0DDD015D-B06C-45D5-8C4C-F59713854639}',
+    '{35286A68-3C57-41A1-BBB1-0EAE73D76C95}',
+    '{A0C69A99-21C8-4671-8703-7934162FCF1D}'
+)
+
+function Get-WCARedirectedKnownFolderLocations {
+    [CmdletBinding()]
+    param()
+
+    $registryPaths = @(
+        'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders',
+        'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders'
+    )
+
+    $locations = foreach ($registryPath in $registryPaths) {
+        try {
+            $item = Get-ItemProperty -Path $registryPath -ErrorAction Stop
+        }
+        catch {
+            continue
+        }
+
+        foreach ($name in $script:KnownFolderRegistryNames) {
+            $property = $item.PSObject.Properties[$name]
+            if ($property -and $property.Value) {
+                [Environment]::ExpandEnvironmentVariables([string]$property.Value)
+            }
+        }
+    }
+
+    return @($locations | Where-Object { $_ } | Select-Object -Unique)
+}
+
 function Get-WCAProtectedLocations {
     [CmdletBinding()]
     param()
 
     $home = [Environment]::GetFolderPath('UserProfile')
-    $locations = foreach ($name in $script:ProtectedNames) {
+    $profileLocations = foreach ($name in $script:ProtectedNames) {
         Join-Path $home $name
     }
 
-    return $locations
+    return @($profileLocations + (Get-WCARedirectedKnownFolderLocations)) |
+        Where-Object { $_ } |
+        Select-Object -Unique
 }
 
 function Normalize-WCAPath {
@@ -93,4 +136,4 @@ function Confirm-WCAAction {
     return $answer -match '^(y|yes)$'
 }
 
-Export-ModuleMember -Function Confirm-WCAAction, Test-WCAProtectedPath, Get-WCAProtectedLocations, Normalize-WCAPath
+Export-ModuleMember -Function Confirm-WCAAction, Test-WCAProtectedPath, Get-WCAProtectedLocations, Get-WCARedirectedKnownFolderLocations, Normalize-WCAPath

@@ -49,9 +49,22 @@ project will eventually contain.
 * Added structured execution logs for delete attempts, skipped cleanup items,
   and service actions.
 * Added Windows Update service restart validation after cache cleanup.
+* Added protection for redirected known folders and enterprise folder
+  redirection paths.
+* Added Intune detection checks for scheduled task registration, config
+  presence, and recent report generation.
+* Added ConfigMgr compliance baseline examples for recurring audit status.
+* Added Windows Event Log event IDs by failure category.
+* Added MSI and winget style packaging templates for managed deployment.
+* Added current comment based `Get-Help` data for the main script,
+  scheduled task installer, Intune scripts, ConfigMgr scripts, and compliance
+  baseline examples.
 
 ### Changed
 
+* Updated documentation to reference enterprise admin guidance, redirected
+  folder protection, enhanced detection scripts, ConfigMgr compliance baseline
+  examples, Event Log event IDs, and packaging templates.
 * Reworked `01-CreateWindowsCleanupTool.md` into a complete standalone
   scaffold prompt.
 * Reworked `02-Build-Core-Framework.md` into a complete standalone
@@ -118,11 +131,12 @@ project will eventually contain.
 
 ### Validation
 
-* PowerShell syntax check passed for all `.ps1` and `.psm1` files.
+* PowerShell syntax check passed for 43 `.ps1` and `.psm1` files.
 * `.\src\WinCleanAudit.ps1 -DryRun` completed successfully.
 * `.\src\WinCleanAudit.ps1 -DryRun -NoBrowserLaunch -JsonReport -CsvReport`
   completed successfully.
-* Pester passed: 59 tests passed, 0 failed.
+* Pester passed: 63 tests passed, 0 failed.
+* Markdown lint passed: 17 files checked, 0 errors.
 
 ### Notes
 

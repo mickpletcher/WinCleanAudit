@@ -1,13 +1,11 @@
 <#
 .SYNOPSIS
-Detects WinCleanAudit installation health for ConfigMgr applications.
+Discovers WinCleanAudit recurring audit compliance for ConfigMgr baselines.
 
 .DESCRIPTION
-Validates that WinCleanAudit is installed, the configuration file exists, the
-scheduled DryRun task is registered, and a recent JSON report exists.
-
-The script writes Installed and exits 0 when compliant. It exits 1 and writes
-missing checks when any required condition is missing.
+Checks script presence, config presence, scheduled task registration, and
+recent JSON report generation. Outputs Compliant when all checks pass.
+Otherwise outputs NonCompliant with comma separated reason codes.
 
 .PARAMETER InstallRoot
 WinCleanAudit install root. Defaults to ProgramData\WinCleanAudit.
@@ -19,9 +17,9 @@ Scheduled task name to verify. Defaults to WinCleanAudit DryRun.
 Maximum age in days for a valid cleanup-report-*.json report.
 
 .EXAMPLE
-.\detection-method.ps1
+.\detection.ps1
 
-Runs default ConfigMgr application detection checks.
+Runs default compliance discovery.
 #>
 [CmdletBinding()]
 param(
@@ -36,15 +34,13 @@ $reportPath = Join-Path $InstallRoot 'reports'
 $errors = @()
 
 if (-not (Test-Path $scriptPath)) {
-    $errors += "Script missing: $scriptPath"
+    $errors += 'ScriptMissing'
 }
 if (-not (Test-Path $configPath)) {
-    $errors += "Config missing: $configPath"
+    $errors += 'ConfigMissing'
 }
-
-$task = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
-if (-not $task) {
-    $errors += "Scheduled task missing: $TaskName"
+if (-not (Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue)) {
+    $errors += 'ScheduledTaskMissing'
 }
 
 $cutoff = (Get-Date).AddDays(-$RecentReportDays)
@@ -54,13 +50,12 @@ $recentReport = Get-ChildItem -Path $reportPath -Filter 'cleanup-report-*.json' 
     Select-Object -First 1
 
 if (-not $recentReport) {
-    $errors += "No cleanup-report-*.json newer than $RecentReportDays days in $reportPath"
+    $errors += 'RecentReportMissing'
 }
 
 if ($errors.Count -eq 0) {
-    Write-Output 'Installed'
-    exit 0
+    'Compliant'
 }
-
-Write-Output ($errors -join '; ')
-exit 1
+else {
+    "NonCompliant:$($errors -join ',')"
+}

@@ -21,10 +21,15 @@
 - Rollback safe execution log for attempted deletes, skipped items, and
   service actions
 - Windows Update service restart validation
+- Redirected known folder and enterprise Folder Redirection protection
 - Enterprise config profiles
 - Report retention
 - Event Log output
+- Category specific Event Log event IDs
 - Endpoint integration patterns for Intune and ConfigMgr
+- Intune detection checks for scheduled task, config, and recent reports
+- ConfigMgr compliance baseline examples
+- MSI and winget style packaging templates
 - Pester tests
 - GitHub Actions CI
 
@@ -43,7 +48,6 @@
 - Per module maximum item limits
 - Browser profile data denylist enforcement
 - Cleanup allowlists per module
-- Redirected known folder protection
 - Module specific include and exclude path controls
 - Signed release artifacts
 

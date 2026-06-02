@@ -1,0 +1,17 @@
+PackageIdentifier: MickPletcher.WinCleanAudit
+PackageVersion: 1.0.0
+PackageLocale: en-US
+Publisher: Mick Pletcher
+PackageName: WinCleanAudit
+License: MIT
+ShortDescription: Safety first Windows cleanup audit and reporting toolkit.
+Description: WinCleanAudit audits Windows cleanup candidates, writes reports, and supports managed recurring DryRun scans.
+Tags:
+  - cleanup
+  - audit
+  - endpoint
+  - powershell
+  - intune
+  - configmgr
+ManifestType: defaultLocale
+ManifestVersion: 1.6.0

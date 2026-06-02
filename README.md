@@ -67,6 +67,19 @@ cleanup-report-YYYYMMDD-HHMMSS.json
 cleanup-report-YYYYMMDD-HHMMSS.csv
 ```
 
+## PowerShell Help
+
+The main scripts include comment based help:
+
+```powershell
+Get-Help .\src\WinCleanAudit.ps1 -Detailed
+Get-Help .\src\Install-WinCleanAuditScheduledTask.ps1 -Detailed
+Get-Help .\deployment\intune\detect.ps1 -Detailed
+Get-Help .\deployment\configmgr\detection-method.ps1 -Detailed
+```
+
+Use `-Examples` for copyable command examples.
+
 ## Run Modes
 
 ### DryRun
@@ -168,6 +181,7 @@ It should not delete from:
 * OneDrive
 * Dropbox
 * Google Drive
+* Redirected known folders
 * Git repositories
 * Source-code folders
 
@@ -223,7 +237,7 @@ and Windows Update service restart validation.
 Current validation status:
 
 ```text
-59 tests passed
+63 tests passed
 0 tests failed
 ```
 
@@ -247,7 +261,8 @@ The badges point to the GitHub Actions workflows for this repository.
 │   └── workflows/
 ├── deployment/
 │   ├── configmgr/
-│   └── intune/
+│   ├── intune/
+│   └── packaging/
 ├── docs/
 │   ├── project-spec.md
 │   ├── roadmap.md
@@ -260,11 +275,13 @@ The badges point to the GitHub Actions workflows for this repository.
 ├── tasks/
 ├── tests/Pester/
 ├── README.md
+├── enterprisereadmin.md
 ├── SECURITY.md
 ├── CONTRIBUTING.md
 ├── changelog.md
 ├── assessment.md
-└── completed-upgrades.md
+├── completed-upgrades.md
+└── future-upgrades.md
 ```
 
 ## Configuration
@@ -297,6 +314,10 @@ Enterprise admin guidance is here:
 Deployment templates are here:
 
 [deployment/README.md](deployment/README.md)
+
+Managed packaging templates are here:
+
+[deployment/packaging/README.md](deployment/packaging/README.md)
 
 The scheduled task installer is here:
 

@@ -1,3 +1,71 @@
+<#
+.SYNOPSIS
+Runs a safe Windows cleanup audit or approved cleanup workflow.
+
+.DESCRIPTION
+WinCleanAudit scans configured Windows cleanup and inventory modules, writes
+Markdown reports, and can optionally write HTML, JSON, and CSV reports.
+
+DryRun is the default mode. DryRun does not delete files. Execute mode requires
+the -Execute switch and still respects protected user data, cloud sync, source
+code, redirected known folder, and enterprise Folder Redirection protections.
+
+Execute mode records attempted deletes, skipped cleanup items, and service
+actions in ExecutionLog. Windows Update cache cleanup validates service restart
+state after cleanup.
+
+.PARAMETER DryRun
+Runs audit mode. This is the default when neither -DryRun nor -Execute is
+provided.
+
+.PARAMETER Execute
+Runs approved cleanup actions. Destructive actions prompt unless -NoPrompt is
+also supplied.
+
+.PARAMETER NoPrompt
+Suppresses confirmation prompts in Execute mode. This switch is rejected unless
+-Execute is also supplied.
+
+.PARAMETER NoBrowserLaunch
+Suppresses automatic HTML report launch during DryRun. Use this for scheduled
+tasks, Intune, ConfigMgr, and other automation.
+
+.PARAMETER JsonReport
+Writes a JSON report with the full structured report object.
+
+.PARAMETER CsvReport
+Writes a CSV report with one summary row per module.
+
+.PARAMETER ReportPath
+Overrides the report output folder.
+
+.PARAMETER ConfigPath
+Specifies the YAML configuration file. Defaults to tasks/windows-cleanup.yaml.
+
+.EXAMPLE
+.\WinCleanAudit.ps1 -DryRun
+
+Runs a safe audit and opens the HTML report.
+
+.EXAMPLE
+.\WinCleanAudit.ps1 -DryRun -NoBrowserLaunch -JsonReport -CsvReport
+
+Runs an automation friendly audit and writes machine readable exports.
+
+.EXAMPLE
+.\WinCleanAudit.ps1 -Execute
+
+Runs cleanup mode with confirmation prompts.
+
+.EXAMPLE
+.\WinCleanAudit.ps1 -Execute -NoPrompt
+
+Runs cleanup mode without prompts. Use only after tested DryRun review.
+
+.NOTES
+Generated reports and logs are written under reports/ by default and should not
+be committed to source control.
+#>
 [CmdletBinding()]
 param(
     [switch]$DryRun,

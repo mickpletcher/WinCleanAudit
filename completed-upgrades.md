@@ -18,6 +18,8 @@ This file lists items from future-upgrades.md that are already implemented.
   skipped items, and service actions.
 - [x] Add explicit service restart validation after Windows Update cache
   cleanup.
+- [x] Add protection for redirected known folders and enterprise folder
+  redirection paths.
 
 ## Tier 2: Quality and Dev Experience
 
@@ -37,3 +39,8 @@ This file lists items from future-upgrades.md that are already implemented.
 - [x] Add optional Windows Event Log output for enterprise monitoring.
 - [x] Add an optional report retention policy for old generated reports and
   logs.
+- [x] Add Intune detection rules that verify scheduled task registration,
+  config presence, and recent report generation.
+- [x] Add ConfigMgr compliance baseline examples for recurring audit status.
+- [x] Add optional Windows Event Log event IDs by failure category.
+- [x] Add MSI and winget style packaging templates for managed deployment.

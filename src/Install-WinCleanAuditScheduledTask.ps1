@@ -1,3 +1,52 @@
+<#
+.SYNOPSIS
+Registers a recurring WinCleanAudit DryRun scheduled task.
+
+.DESCRIPTION
+Creates or replaces a scheduled task that runs WinCleanAudit in DryRun mode.
+The task always includes -NoBrowserLaunch so managed automation does not open
+the HTML report interactively.
+
+Use -JsonReport and -CsvReport when reports need to be collected by Intune,
+ConfigMgr, or another enterprise reporting pipeline.
+
+.PARAMETER TaskName
+Name of the scheduled task. Defaults to WinCleanAudit DryRun.
+
+.PARAMETER ScriptPath
+Path to WinCleanAudit.ps1.
+
+.PARAMETER ConfigPath
+Path to tasks/windows-cleanup.yaml.
+
+.PARAMETER ReportPath
+Folder where scheduled task reports are written.
+
+.PARAMETER Frequency
+Scheduled task cadence. Valid values are Daily and Weekly.
+
+.PARAMETER At
+Scheduled task start time.
+
+.PARAMETER JsonReport
+Adds -JsonReport to the scheduled task command.
+
+.PARAMETER CsvReport
+Adds -CsvReport to the scheduled task command.
+
+.PARAMETER RunAsSystem
+Registers the task to run as SYSTEM with highest privileges.
+
+.EXAMPLE
+.\Install-WinCleanAuditScheduledTask.ps1 -Frequency Weekly -JsonReport -CsvReport
+
+Registers a weekly DryRun task with JSON and CSV exports.
+
+.EXAMPLE
+.\Install-WinCleanAuditScheduledTask.ps1 -Frequency Weekly -JsonReport -CsvReport -RunAsSystem
+
+Registers a managed weekly DryRun task under SYSTEM.
+#>
 [CmdletBinding(SupportsShouldProcess)]
 param(
     [string]$TaskName = 'WinCleanAudit DryRun',
