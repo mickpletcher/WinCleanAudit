@@ -14,7 +14,10 @@ This file lists items from future-upgrades.md that are already implemented.
 
 - [x] Maintain a Pester suite that covers all modules.
 - [x] Run CI for PowerShell tests and Markdown linting.
+- [x] Add lightweight GitHub project governance with a project spec, issue
+  templates, and a pull request template.
 
 ## Tier 3: Platform and Enterprise Features
 
 - [x] Generate Markdown reports with per module result sections.
+- [x] Generate and open an HTML report during DryRun.
