@@ -3,12 +3,18 @@ BeforeAll {
 }
 
 Describe 'Safety' {
+    It 'imports without unapproved verb warnings' {
+        {
+            Import-Module "$PSScriptRoot\..\..\src\modules\Safety.psm1" -Force -WarningAction Stop
+        } | Should -Not -Throw
+    }
+
     It 'imports and exposes functions' {
         Get-Command Confirm-WCAAction -ErrorAction Stop | Should -Not -BeNullOrEmpty
         Get-Command Test-WCAProtectedPath -ErrorAction Stop | Should -Not -BeNullOrEmpty
         Get-Command Get-WCAProtectedLocations -ErrorAction Stop | Should -Not -BeNullOrEmpty
         Get-Command Get-WCARedirectedKnownFolderLocations -ErrorAction Stop | Should -Not -BeNullOrEmpty
-        Get-Command Normalize-WCAPath -ErrorAction Stop | Should -Not -BeNullOrEmpty
+        Get-Command ConvertTo-WCANormalizedPath -ErrorAction Stop | Should -Not -BeNullOrEmpty
     }
 
     It 'returns protected locations' {
@@ -17,7 +23,7 @@ Describe 'Safety' {
 
     It 'normalizes quoted paths and trailing separators' {
         $userProfile = [Environment]::GetFolderPath('UserProfile')
-        Normalize-WCAPath -Path "`"$userProfile\Documents\`"" | Should -Be (Join-Path $userProfile 'Documents')
+        ConvertTo-WCANormalizedPath -Path "`"$userProfile\Documents\`"" | Should -Be (Join-Path $userProfile 'Documents')
     }
 
     It 'treats protected location child paths as protected' {

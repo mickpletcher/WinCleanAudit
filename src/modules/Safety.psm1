@@ -64,7 +64,7 @@ function Get-WCAProtectedLocations {
         Select-Object -Unique
 }
 
-function Normalize-WCAPath {
+function ConvertTo-WCANormalizedPath {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]
@@ -83,7 +83,7 @@ function Test-WCAProtectedPath {
     )
 
     try {
-        $resolved = Normalize-WCAPath -Path $Path
+        $resolved = ConvertTo-WCANormalizedPath -Path $Path
     }
     catch {
         return $true
@@ -91,7 +91,7 @@ function Test-WCAProtectedPath {
 
     foreach ($protected in Get-WCAProtectedLocations) {
         try {
-            $target = Normalize-WCAPath -Path $protected
+            $target = ConvertTo-WCANormalizedPath -Path $protected
             $isSamePath = [string]::Equals($resolved, $target, [System.StringComparison]::OrdinalIgnoreCase)
             $isChildPath = $resolved.StartsWith("$target$([IO.Path]::DirectorySeparatorChar)", [System.StringComparison]::OrdinalIgnoreCase) -or
                 $resolved.StartsWith("$target$([IO.Path]::AltDirectorySeparatorChar)", [System.StringComparison]::OrdinalIgnoreCase)
@@ -136,4 +136,4 @@ function Confirm-WCAAction {
     return $answer -match '^(y|yes)$'
 }
 
-Export-ModuleMember -Function Confirm-WCAAction, Test-WCAProtectedPath, Get-WCAProtectedLocations, Get-WCARedirectedKnownFolderLocations, Normalize-WCAPath
+Export-ModuleMember -Function Confirm-WCAAction, Test-WCAProtectedPath, Get-WCAProtectedLocations, Get-WCARedirectedKnownFolderLocations, ConvertTo-WCANormalizedPath

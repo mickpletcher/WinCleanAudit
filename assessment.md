@@ -61,7 +61,7 @@ Validation performed on June 1, 2026:
 
 * PowerShell syntax check passed for 43 `.ps1` and `.psm1` files.
 * `.\src\WinCleanAudit.ps1 -DryRun` completed successfully.
-* Pester test suite passed: 63 passed, 0 failed.
+* Pester test suite passed: 64 passed, 0 failed.
 * Markdownlint passed: 17 files checked, 0 errors.
 * DryRun generated Markdown, HTML, JSON, CSV, and log files under `reports/`
   when optional exports were requested.
@@ -91,6 +91,8 @@ Validation performed on June 1, 2026:
 * Comment based `Get-Help` data was updated for the main script, scheduled
   task installer, Intune scripts, ConfigMgr scripts, and compliance baseline
   examples.
+* Safety module exports now use approved PowerShell verbs and import without
+  unapproved verb warnings.
 
 ## Git Status Notes
 

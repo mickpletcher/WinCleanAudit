@@ -65,6 +65,8 @@ project will eventually contain.
 * Updated documentation to reference enterprise admin guidance, redirected
   folder protection, enhanced detection scripts, ConfigMgr compliance baseline
   examples, Event Log event IDs, and packaging templates.
+* Renamed the safety path normalization helper to use an approved PowerShell
+  verb and stop module import warnings.
 * Reworked `01-CreateWindowsCleanupTool.md` into a complete standalone
   scaffold prompt.
 * Reworked `02-Build-Core-Framework.md` into a complete standalone
@@ -135,7 +137,7 @@ project will eventually contain.
 * `.\src\WinCleanAudit.ps1 -DryRun` completed successfully.
 * `.\src\WinCleanAudit.ps1 -DryRun -NoBrowserLaunch -JsonReport -CsvReport`
   completed successfully.
-* Pester passed: 63 tests passed, 0 failed.
+* Pester passed: 64 tests passed, 0 failed.
 * Markdown lint passed: 17 files checked, 0 errors.
 
 ### Notes

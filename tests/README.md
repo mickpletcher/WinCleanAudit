@@ -20,7 +20,7 @@ Invoke-Pester -Path .\tests\Pester
 Current expected full suite result:
 
 ```text
-63 tests passed
+64 tests passed
 0 tests failed
 ```
 
