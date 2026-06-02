@@ -21,3 +21,4 @@ This file lists items from future-upgrades.md that are already implemented.
 
 - [x] Generate Markdown reports with per module result sections.
 - [x] Generate and open an HTML report during DryRun.
+- [x] Add optional JSON and CSV report exports.

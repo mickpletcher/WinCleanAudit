@@ -226,6 +226,8 @@ prompts/
 # Generated WinCleanAudit reports and logs
 reports/*.md
 reports/*.html
+reports/*.json
+reports/*.csv
 reports/*.log
 !reports/.gitkeep
 testResults.xml

@@ -41,6 +41,8 @@ Markdown reports are always written.
 
 DryRun also writes an HTML report and opens it in the default browser.
 
+JSON and CSV reports are optional and are written only when requested.
+
 Reports are written under `reports/` by default.
 
 Generated reports and logs must not be committed.

@@ -256,4 +256,67 @@ function Write-HtmlReport {
     return $path
 }
 
-Export-ModuleMember -Function New-WinCleanReport, ConvertTo-ReadableSize, Add-ReportSection, Write-MarkdownReport, Write-HtmlReport
+function Write-JsonReport {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        $Report,
+        [string]$OutputFolder = 'reports',
+        [string]$Timestamp = (Get-Date -Format 'yyyyMMdd-HHmmss')
+    )
+
+    if (-not (Test-Path $OutputFolder)) {
+        New-Item -Path $OutputFolder -ItemType Directory -Force | Out-Null
+    }
+
+    $fileName = 'cleanup-report-{0}.json' -f $Timestamp
+    $path = Join-Path $OutputFolder $fileName
+
+    $Report | ConvertTo-Json -Depth 8 | Set-Content -Path $path -Encoding utf8
+    return $path
+}
+
+function Write-CsvReport {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        $Report,
+        [string]$OutputFolder = 'reports',
+        [string]$Timestamp = (Get-Date -Format 'yyyyMMdd-HHmmss')
+    )
+
+    if (-not (Test-Path $OutputFolder)) {
+        New-Item -Path $OutputFolder -ItemType Directory -Force | Out-Null
+    }
+
+    $fileName = 'cleanup-report-{0}.csv' -f $Timestamp
+    $path = Join-Path $OutputFolder $fileName
+
+    $rows = foreach ($result in $Report.Results) {
+        [PSCustomObject]@{
+            ComputerName      = $Report.ComputerName
+            UserName          = $Report.UserName
+            DateTime          = $Report.DateTime
+            Mode              = $Report.Mode
+            TaskName          = $result.TaskName
+            Module            = $result.Module
+            Status            = $result.Status
+            ItemsScanned      = $result.ItemsScanned
+            ItemsModified     = $result.ItemsModified
+            EstimatedBytes    = $result.EstimatedBytes
+            EstimatedReadable = ConvertTo-ReadableSize -Bytes $result.EstimatedBytes
+            RecoveredBytes    = $result.RecoveredBytes
+            RecoveredReadable = ConvertTo-ReadableSize -Bytes $result.RecoveredBytes
+            ActionsTaken      = @($result.ActionsTaken) -join '; '
+            Warnings          = @($result.Warnings) -join '; '
+            Errors            = @($result.Errors) -join '; '
+            Recommendations   = @($result.Recommendations) -join '; '
+            Duration          = $result.Duration
+        }
+    }
+
+    @($rows) | Export-Csv -Path $path -NoTypeInformation -Encoding utf8
+    return $path
+}
+
+Export-ModuleMember -Function New-WinCleanReport, ConvertTo-ReadableSize, Add-ReportSection, Write-MarkdownReport, Write-HtmlReport, Write-JsonReport, Write-CsvReport

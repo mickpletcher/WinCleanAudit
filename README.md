@@ -20,7 +20,7 @@ Use this tool if you want to:
 * Review old logs, temp files, browser cache, and Recycle Bin usage.
 * Inventory startup items and installed apps.
 * Check disk usage and basic disk health.
-* Generate Markdown and HTML reports you can review later.
+* Generate Markdown, HTML, JSON, and CSV reports you can review later.
 
 You do not need to be a PowerShell expert to run a basic scan.
 
@@ -63,6 +63,8 @@ Report files use this format:
 ```text
 cleanup-report-YYYYMMDD-HHMMSS.md
 cleanup-report-YYYYMMDD-HHMMSS.html
+cleanup-report-YYYYMMDD-HHMMSS.json
+cleanup-report-YYYYMMDD-HHMMSS.csv
 ```
 
 ## Run Modes
@@ -89,6 +91,17 @@ Cleanup mode.
 This can delete approved cleanup targets after confirmation.
 
 Use this only after reading the DryRun report.
+
+### Optional JSON And CSV Reports
+
+Use these switches when you want machine-readable report exports:
+
+```powershell
+.\src\WinCleanAudit.ps1 -DryRun -JsonReport -CsvReport
+```
+
+JSON contains the full report object.
+CSV contains one summary row per module.
 
 ### Execute With NoPrompt
 
@@ -168,6 +181,8 @@ The report includes:
 * Warnings
 * Errors
 * Recommendations
+
+Optional JSON and CSV reports use the same timestamp as the Markdown report.
 
 For a normal first run, look for:
 

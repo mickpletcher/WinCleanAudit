@@ -27,6 +27,12 @@ The HTML report opens in your default browser.
 .\src\WinCleanAudit.ps1 -DryRun -ReportPath .\reports
 ```
 
+## Optional JSON And CSV Reports
+
+```powershell
+.\src\WinCleanAudit.ps1 -DryRun -JsonReport -CsvReport
+```
+
 ## Module Notes
 
 - Temp cleanup audits approved temp folders in DryRun.

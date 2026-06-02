@@ -3,6 +3,8 @@ param(
     [switch]$DryRun,
     [switch]$Execute,
     [switch]$NoPrompt,
+    [switch]$JsonReport,
+    [switch]$CsvReport,
     [string]$ReportPath,
     [string]$ConfigPath = (Join-Path $PSScriptRoot '..\tasks\windows-cleanup.yaml')
 )
@@ -68,6 +70,18 @@ if ($DryRun) {
     Start-Process -FilePath $writtenHtmlReport
 }
 
+$writtenJsonReport = $null
+if ($JsonReport) {
+    $writtenJsonReport = Write-JsonReport -Report $report -OutputFolder $ReportPath -Timestamp $reportStamp
+    Write-WCALog -Message "JSON report written: $writtenJsonReport" -Level 'SUCCESS'
+}
+
+$writtenCsvReport = $null
+if ($CsvReport) {
+    $writtenCsvReport = Write-CsvReport -Report $report -OutputFolder $ReportPath -Timestamp $reportStamp
+    Write-WCALog -Message "CSV report written: $writtenCsvReport" -Level 'SUCCESS'
+}
+
 Close-WCALog
 
 [PSCustomObject]@{
@@ -75,5 +89,7 @@ Close-WCALog
     Mode       = $mode
     Report     = $writtenReport
     HtmlReport = $writtenHtmlReport
+    JsonReport = $writtenJsonReport
+    CsvReport  = $writtenCsvReport
     Results    = $results
 }
