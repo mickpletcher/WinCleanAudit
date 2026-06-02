@@ -34,6 +34,13 @@ project will eventually contain.
   contract, module contract, and release criteria.
 * Added GitHub issue templates for bug reports and feature requests.
 * Added a GitHub pull request template with validation and safety checks.
+* Added policy profiles in `tasks/windows-cleanup.yaml` for local and
+  enterprise fleet defaults.
+* Added `src/Install-WinCleanAuditScheduledTask.ps1` for managed recurring
+  DryRun scans.
+* Added Intune and ConfigMgr deployment templates under `deployment/`.
+* Added optional Windows Event Log output for enterprise monitoring.
+* Added optional report retention cleanup for old generated reports and logs.
 
 ### Changed
 
@@ -92,6 +99,8 @@ project will eventually contain.
   `-CsvReport`.
 * Updated `.gitignore` to ignore generated JSON and CSV reports under
   `reports/`.
+* Updated report export behavior so policy profiles can enable JSON and CSV
+  reports without command-line switches.
 
 ### Removed
 
@@ -103,7 +112,7 @@ project will eventually contain.
 
 * PowerShell syntax check passed for all `.ps1` and `.psm1` files.
 * `.\src\WinCleanAudit.ps1 -DryRun` completed successfully.
-* Pester passed: 41 tests passed, 0 failed.
+* Pester passed: 46 tests passed, 0 failed.
 
 ### Notes
 

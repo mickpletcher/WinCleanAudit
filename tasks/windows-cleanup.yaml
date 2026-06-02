@@ -4,12 +4,54 @@ application:
 
 execution:
   default_mode: DryRun
+  policy_profile: default
 
 reporting:
   output_folder: reports
+  json_export: false
+  csv_export: false
+  retention:
+    enabled: false
+    days: 30
+    include_extensions:
+      - .md
+      - .html
+      - .json
+      - .csv
+      - .log
 
 logging:
   level: INFO
+  event_log:
+    enabled: false
+    log_name: Application
+    source: WinCleanAudit
+
+policy_profiles:
+  default:
+    description: Standard local audit profile.
+    reporting:
+      json_export: false
+      csv_export: false
+      retention_days: 30
+    logging:
+      event_log_enabled: false
+  enterprise_audit:
+    description: Endpoint fleet audit profile with machine-readable exports.
+    reporting:
+      json_export: true
+      csv_export: true
+      retention_days: 14
+    logging:
+      event_log_enabled: true
+  local_quiet:
+    description: Local profile with minimal report exports.
+    reporting:
+      json_export: false
+      csv_export: false
+      retention_days: 7
+    logging:
+      event_log_enabled: false
 
 safety:
   protect_user_data: true

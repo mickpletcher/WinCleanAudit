@@ -319,4 +319,47 @@ function Write-CsvReport {
     return $path
 }
 
-Export-ModuleMember -Function New-WinCleanReport, ConvertTo-ReadableSize, Add-ReportSection, Write-MarkdownReport, Write-HtmlReport, Write-JsonReport, Write-CsvReport
+function Remove-OldWCAReports {
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [string]$OutputFolder = 'reports',
+        [int]$RetentionDays = 30,
+        [string[]]$IncludeExtensions = @('.md','.html','.json','.csv','.log')
+    )
+
+    if ($RetentionDays -lt 1) {
+        throw 'RetentionDays must be 1 or greater.'
+    }
+    if (-not (Test-Path $OutputFolder)) {
+        return [PSCustomObject]@{
+            OutputFolder = $OutputFolder
+            RetentionDays = $RetentionDays
+            Removed = 0
+            RemovedPaths = @()
+        }
+    }
+
+    $cutoff = (Get-Date).AddDays(-$RetentionDays)
+    $extensions = @($IncludeExtensions | ForEach-Object { $_.ToLowerInvariant() })
+    $removedPaths = @()
+
+    $targets = Get-ChildItem -Path $OutputFolder -File | Where-Object {
+        $_.LastWriteTime -lt $cutoff -and $extensions -contains $_.Extension.ToLowerInvariant()
+    }
+
+    foreach ($target in $targets) {
+        if ($PSCmdlet.ShouldProcess($target.FullName, 'Remove old WinCleanAudit report')) {
+            Remove-Item -LiteralPath $target.FullName -Force
+            $removedPaths += $target.FullName
+        }
+    }
+
+    return [PSCustomObject]@{
+        OutputFolder = $OutputFolder
+        RetentionDays = $RetentionDays
+        Removed = $removedPaths.Count
+        RemovedPaths = $removedPaths
+    }
+}
+
+Export-ModuleMember -Function New-WinCleanReport, ConvertTo-ReadableSize, Add-ReportSection, Write-MarkdownReport, Write-HtmlReport, Write-JsonReport, Write-CsvReport, Remove-OldWCAReports

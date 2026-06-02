@@ -16,6 +16,9 @@ The core app, modules, tests, docs, workflows, and prompt files are present.
 │   ├── ISSUE_TEMPLATE/
 │   ├── PULL_REQUEST_TEMPLATE.md
 │   └── workflows/
+├── deployment/
+│   ├── configmgr/
+│   └── intune/
 ├── docs/
 │   ├── project-spec.md
 │   ├── roadmap.md
@@ -55,7 +58,7 @@ Validation performed on June 1, 2026:
 
 * PowerShell syntax check passed for all `.ps1` and `.psm1` files.
 * `.\src\WinCleanAudit.ps1 -DryRun` completed successfully.
-* Pester test suite passed: 41 passed, 0 failed.
+* Pester test suite passed: 46 passed, 0 failed.
 * Markdownlint passed: 12 files checked, 0 errors.
 * DryRun generated Markdown, HTML, JSON, CSV, and log files under `reports/`
   when optional exports were requested.
@@ -69,6 +72,8 @@ Validation performed on June 1, 2026:
 * Markdown lint workflow excludes local prompt and report content.
 * Lightweight GitHub project governance was added through
   `docs/project-spec.md`, issue templates, and a pull request template.
+* Enterprise policy profiles, deployment templates, scheduled task
+  installation, optional Event Log output, and report retention were added.
 
 ## Git Status Notes
 
@@ -108,6 +113,8 @@ The app enforces these project rules:
 * Reports are generated in Markdown.
 * DryRun also generates an HTML report and opens it in the default browser.
 * JSON and CSV reports are optional exports.
+* Policy profiles can enable fleet defaults for exports and Event Log output.
+* Report retention can remove old generated files when explicitly enabled.
 
 ## Standard Result Contract
 
@@ -144,6 +151,7 @@ Write-MarkdownReport
 Write-HtmlReport
 Write-JsonReport
 Write-CsvReport
+Remove-OldWCAReports
 ```
 
 ## Findings

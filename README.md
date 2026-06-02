@@ -212,7 +212,7 @@ The test suite checks imports, DryRun behavior, output shape, and safety guards.
 Current validation status:
 
 ```text
-38 tests passed
+46 tests passed
 0 tests failed
 ```
 
@@ -234,6 +234,9 @@ The badges point to the GitHub Actions workflows for this repository.
 │   ├── ISSUE_TEMPLATE/
 │   ├── PULL_REQUEST_TEMPLATE.md
 │   └── workflows/
+├── deployment/
+│   ├── configmgr/
+│   └── intune/
 ├── docs/
 │   ├── project-spec.md
 │   ├── roadmap.md
@@ -263,6 +266,32 @@ tasks/windows-cleanup.yaml
 
 This file controls enabled modules, report settings, safety settings, and
 module-specific options.
+
+Policy profiles are also selected there:
+
+```yaml
+execution:
+  policy_profile: enterprise_audit
+```
+
+The `enterprise_audit` profile enables machine-readable exports and Event Log
+output.
+
+## Enterprise Deployment
+
+Deployment templates are here:
+
+[deployment/README.md](deployment/README.md)
+
+The scheduled task installer is here:
+
+```powershell
+.\src\Install-WinCleanAuditScheduledTask.ps1 -Frequency Weekly -JsonReport -CsvReport
+```
+
+Report retention is disabled by default.
+Enable it in `tasks/windows-cleanup.yaml` when old generated files should be
+removed automatically.
 
 ## Project Spec
 

@@ -47,6 +47,19 @@ Reports are written under `reports/` by default.
 
 Generated reports and logs must not be committed.
 
+Report retention is optional and disabled by default.
+
+## Enterprise Contract
+
+Policy profiles centralize fleet defaults in `tasks/windows-cleanup.yaml`.
+
+Scheduled task installation is optional and managed by
+`src/Install-WinCleanAuditScheduledTask.ps1`.
+
+Intune and ConfigMgr starter templates live under `deployment/`.
+
+Windows Event Log output is optional and disabled by default.
+
 ## Module Contract
 
 Each module returns a structured result object:
@@ -79,6 +92,8 @@ Pester passes.
 DryRun completes.
 
 Markdown and HTML reports are generated.
+
+Optional JSON and CSV report exports work when requested or enabled by policy.
 
 Generated reports and logs are not staged.
 

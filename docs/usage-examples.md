@@ -33,6 +33,21 @@ The HTML report opens in your default browser.
 .\src\WinCleanAudit.ps1 -DryRun -JsonReport -CsvReport
 ```
 
+## Enterprise Audit Policy Profile
+
+Set this in `tasks/windows-cleanup.yaml`:
+
+```yaml
+execution:
+  policy_profile: enterprise_audit
+```
+
+## Scheduled DryRun
+
+```powershell
+.\src\Install-WinCleanAuditScheduledTask.ps1 -Frequency Weekly -JsonReport -CsvReport
+```
+
 ## Module Notes
 
 - Temp cleanup audits approved temp folders in DryRun.

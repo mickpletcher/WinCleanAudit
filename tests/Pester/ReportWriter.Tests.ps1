@@ -11,6 +11,7 @@ Describe 'ReportWriter' {
         Get-Command Write-HtmlReport -ErrorAction Stop | Should -Not -BeNullOrEmpty
         Get-Command Write-JsonReport -ErrorAction Stop | Should -Not -BeNullOrEmpty
         Get-Command Write-CsvReport -ErrorAction Stop | Should -Not -BeNullOrEmpty
+        Get-Command Remove-OldWCAReports -ErrorAction Stop | Should -Not -BeNullOrEmpty
     }
 
     It 'converts bytes to readable values' {
@@ -63,5 +64,29 @@ Describe 'ReportWriter' {
         Split-Path -Leaf $path | Should -Be 'cleanup-report-20260601-201500.csv'
         Test-Path $path | Should -BeTrue
         (Import-Csv -Path $path)[0].Module | Should -Be 'Test'
+    }
+
+    It 'removes old generated report files by retention policy' {
+        $tmp = Join-Path $env:TEMP 'wca-tests-retention'
+        if (-not (Test-Path $tmp)) {
+            New-Item -Path $tmp -ItemType Directory -Force | Out-Null
+        }
+
+        $oldReport = Join-Path $tmp 'cleanup-report-old.md'
+        $newReport = Join-Path $tmp 'cleanup-report-new.md'
+        $ignoredFile = Join-Path $tmp 'notes.txt'
+        'old' | Set-Content -Path $oldReport
+        'new' | Set-Content -Path $newReport
+        'ignore' | Set-Content -Path $ignoredFile
+        (Get-Item $oldReport).LastWriteTime = (Get-Date).AddDays(-40)
+        (Get-Item $newReport).LastWriteTime = Get-Date
+        (Get-Item $ignoredFile).LastWriteTime = (Get-Date).AddDays(-40)
+
+        $result = Remove-OldWCAReports -OutputFolder $tmp -RetentionDays 30 -IncludeExtensions @('.md')
+
+        $result.Removed | Should -Be 1
+        Test-Path $oldReport | Should -BeFalse
+        Test-Path $newReport | Should -BeTrue
+        Test-Path $ignoredFile | Should -BeTrue
     }
 }

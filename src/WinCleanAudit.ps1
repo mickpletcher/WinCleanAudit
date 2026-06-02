@@ -38,12 +38,14 @@ $configCheck = Test-WCAConfiguration -Configuration $config
 if (-not $configCheck.IsValid) {
     throw "Configuration invalid: $($configCheck.Errors -join '; ')"
 }
+$policyProfile = Get-WCAPolicyProfile -Configuration $config
 
 $mode = if ($Execute) { 'Execute' } else { 'DryRun' }
 $runStamp = Get-Date -Format 'yyyyMMdd-HHmmss'
 $defaultLogPath = Join-Path $PSScriptRoot "..\reports\wincleanaudit-$runStamp.log"
-Initialize-WCALogging -LogPath $defaultLogPath -Level $config.logging.level
+Initialize-WCALogging -LogPath $defaultLogPath -Level $config.logging.level -EventLogEnabled ([bool]$policyProfile.Profile.logging.event_log_enabled -or [bool]$config.logging.event_log.enabled) -EventLogName $config.logging.event_log.log_name -EventLogSource $config.logging.event_log.source
 Write-WCALog -Message "WinCleanAudit $script:WinCleanAuditVersion starting in mode $mode" -Level 'INFO'
+Write-WCALog -Message "Policy profile: $($policyProfile.Name)" -Level 'INFO'
 
 $loadResult = Import-WCAModules -ModuleNames $config.modules.enabled
 foreach ($loadError in $loadResult.Errors) {
@@ -71,25 +73,42 @@ if ($DryRun) {
 }
 
 $writtenJsonReport = $null
-if ($JsonReport) {
+if ($JsonReport -or [bool]$config.reporting.json_export -or [bool]$policyProfile.Profile.reporting.json_export) {
     $writtenJsonReport = Write-JsonReport -Report $report -OutputFolder $ReportPath -Timestamp $reportStamp
     Write-WCALog -Message "JSON report written: $writtenJsonReport" -Level 'SUCCESS'
 }
 
 $writtenCsvReport = $null
-if ($CsvReport) {
+if ($CsvReport -or [bool]$config.reporting.csv_export -or [bool]$policyProfile.Profile.reporting.csv_export) {
     $writtenCsvReport = Write-CsvReport -Report $report -OutputFolder $ReportPath -Timestamp $reportStamp
     Write-WCALog -Message "CSV report written: $writtenCsvReport" -Level 'SUCCESS'
+}
+
+$retentionResult = $null
+if ([bool]$config.reporting.retention.enabled) {
+    $retentionDays = if ($policyProfile.Profile.reporting.retention_days) {
+        [int]$policyProfile.Profile.reporting.retention_days
+    }
+    elseif ($config.reporting.retention.days) {
+        [int]$config.reporting.retention.days
+    }
+    else {
+        30
+    }
+    $retentionResult = Remove-OldWCAReports -OutputFolder $ReportPath -RetentionDays $retentionDays -IncludeExtensions $config.reporting.retention.include_extensions
+    Write-WCALog -Message "Report retention removed $($retentionResult.Removed) old files." -Level 'INFO'
 }
 
 Close-WCALog
 
 [PSCustomObject]@{
-    Version    = $script:WinCleanAuditVersion
-    Mode       = $mode
-    Report     = $writtenReport
-    HtmlReport = $writtenHtmlReport
-    JsonReport = $writtenJsonReport
-    CsvReport  = $writtenCsvReport
-    Results    = $results
+    Version         = $script:WinCleanAuditVersion
+    Mode            = $mode
+    PolicyProfile   = $policyProfile.Name
+    Report          = $writtenReport
+    HtmlReport      = $writtenHtmlReport
+    JsonReport      = $writtenJsonReport
+    CsvReport       = $writtenCsvReport
+    RetentionResult = $retentionResult
+    Results         = $results
 }

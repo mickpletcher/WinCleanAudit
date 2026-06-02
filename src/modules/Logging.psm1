@@ -1,15 +1,34 @@
 $script:WcaLogFile = $null
 $script:WcaLogLevel = 'INFO'
+$script:WcaEventLogEnabled = $false
+$script:WcaEventLogName = 'Application'
+$script:WcaEventLogSource = 'WinCleanAudit'
 
 function Initialize-WCALogging {
     [CmdletBinding()]
     param(
         [string]$LogPath,
         [ValidateSet('DEBUG','INFO','WARNING','ERROR','SUCCESS')]
-        [string]$Level = 'INFO'
+        [string]$Level = 'INFO',
+        [bool]$EventLogEnabled = $false,
+        [string]$EventLogName = 'Application',
+        [string]$EventLogSource = 'WinCleanAudit'
     )
 
     $script:WcaLogLevel = $Level
+    $script:WcaEventLogEnabled = $EventLogEnabled
+    $script:WcaEventLogName = $EventLogName
+    $script:WcaEventLogSource = $EventLogSource
+
+    if ($script:WcaEventLogEnabled -and -not [System.Diagnostics.EventLog]::SourceExists($script:WcaEventLogSource)) {
+        try {
+            New-EventLog -LogName $script:WcaEventLogName -Source $script:WcaEventLogSource -ErrorAction Stop
+        }
+        catch {
+            $script:WcaEventLogEnabled = $false
+        }
+    }
+
     if (-not $LogPath) {
         return
     }
@@ -36,6 +55,19 @@ function Write-WCALog {
     Write-Host $line
     if ($script:WcaLogFile) {
         $line | Out-File -FilePath $script:WcaLogFile -Encoding utf8 -Append
+    }
+    if ($script:WcaEventLogEnabled) {
+        $entryType = switch ($Level) {
+            'ERROR' { 'Error' }
+            'WARNING' { 'Warning' }
+            default { 'Information' }
+        }
+        try {
+            Write-EventLog -LogName $script:WcaEventLogName -Source $script:WcaEventLogSource -EntryType $entryType -EventId 1000 -Message $Message -ErrorAction Stop
+        }
+        catch {
+            $script:WcaEventLogEnabled = $false
+        }
     }
 }
 

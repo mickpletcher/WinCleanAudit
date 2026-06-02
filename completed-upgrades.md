@@ -22,3 +22,9 @@ This file lists items from future-upgrades.md that are already implemented.
 - [x] Generate Markdown reports with per module result sections.
 - [x] Generate and open an HTML report during DryRun.
 - [x] Add optional JSON and CSV report exports.
+- [x] Add centralized policy profiles for enterprise endpoint fleets.
+- [x] Add optional scheduled task installer for managed recurring runs.
+- [x] Add integration templates for Intune and ConfigMgr deployment.
+- [x] Add optional Windows Event Log output for enterprise monitoring.
+- [x] Add an optional report retention policy for old generated reports and
+  logs.
